@@ -2,7 +2,9 @@ var ehandlebars = require('express-handlebars')
 
 module.exports = function(app) {
   var hbs = ehandlebars.create({
-    defaultLayout: 'app',
+      defaultLayout: 'app',
+      layoutsDir: __dirname + '/views/layouts',
+      
     helpers: {
       section: function(name, options) {
         if (!this._sections) this._sections = {}

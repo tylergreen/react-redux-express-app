@@ -2,10 +2,10 @@
 
 var express = require('express'),
     app = express(),
-    setupHandlebars  = require('./app/setupHandlebars.js')(app),
-    setupPassport = require('./app/setupPassport'),
+    setupHandlebars  = require('./setupHandlebars.js')(app),
+    setupPassport = require('./setupPassport'),
     flash = require('connect-flash'),
-    appRouter = require('./app/routers/appRouter.js')(express),
+    appRouter = require('./routers/appRouter.js')(express),
     session = require('express-session'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
@@ -17,6 +17,7 @@ app.use(cookieParser())
 app.use(session({ secret: '4564f6s4fdsfdfd', resave: false, saveUninitialized: false }))
 
 app.use('/styles', express.static(__dirname + '/styles'))
+app.set('views', __dirname + '/views')
 
 app.use(flash())
 app.use(function(req, res, next) {

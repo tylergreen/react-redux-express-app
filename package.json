@@ -1,9 +1,10 @@
 {
-  "name": "auth-quickstart",
-  "version": "0.0.1",
-  "description": "",
-  "main": "app.js",
-  "author": "Petr Stribny",
+    "name": "tyler-sample-app",
+    "version": "0.0.1",
+    "description": "",
+    "main": "src/server/app.js",
+    "author": "Tyler Green",
+    "scripts" : {"start": "node src/server/app.js"},
   "dependencies": {
     "sequelize": "~3.6.0",
     "pg-hstore": "~2.3.2",
