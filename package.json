@@ -1,10 +1,12 @@
 {
-    "name": "tyler-sample-app",
-    "version": "0.0.1",
-    "description": "",
-    "main": "src/server/app.js",
-    "author": "Tyler Green",
-    "scripts" : {"start": "node src/server/app.js"},
+  "name": "tyler-sample-app",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/server/app.js",
+  "author": "Tyler Green",
+  "scripts": {
+    "start": "node src/server/app.js"
+  },
   "dependencies": {
     "sequelize": "~3.6.0",
     "pg-hstore": "~2.3.2",
@@ -17,6 +19,19 @@
     "express-session": "~1.11.3",
     "connect-flash": "~0.1.1",
     "bcrypt": "~0.8.5",
-    "express-handlebars": "~2.0.1"
+    "express-handlebars": "~2.0.1",
+    "lodash": "^4.13.1",
+    "paper": "^0.9.25",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
+    "react-redux": "^4.4.5",
+    "redux": "^3.5.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.10.4",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.11.1",
+    "webpack": "^1.13.1"
   }
 }

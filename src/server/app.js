@@ -16,8 +16,11 @@ var port = process.env.PORT || 8080
 app.use(cookieParser())
 app.use(session({ secret: '4564f6s4fdsfdfd', resave: false, saveUninitialized: false }))
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use('/styles', express.static(__dirname + '/styles'))
 app.set('views', __dirname + '/views')
+
 
 app.use(flash())
 app.use(function(req, res, next) {
