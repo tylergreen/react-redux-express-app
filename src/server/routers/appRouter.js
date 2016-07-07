@@ -14,11 +14,20 @@ module.exports = function(express) {
   router.get('/signup', signupController.show)
   router.post('/signup', signupController.signup)
 
-  router.post('/login', passport.authenticate('local', {
-      successRedirect: '/dashboard',
-      failureRedirect: '/',
-      failureFlash: true 
-  }))
+  router.post('/login',
+                passport.authenticate('local'),
+                function(req, res) {
+                    res.send("Succssefully authentiated yay!")
+                }
+             )
+
+    router.post('/echo',
+                function(req, res) {
+                    console.log("Debug output")
+                    console.log(req)
+                    console.log(req.body)
+                    res.send("hi friend") 
+                })
 
   router.get('/', function(req, res) {
     res.render('home')
