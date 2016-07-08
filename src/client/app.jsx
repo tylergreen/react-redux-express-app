@@ -27,27 +27,49 @@ class LoginForm extends React.Component {
             return <LogoutButton> </LogoutButton>
         }
         else {
-            return <div>
-                <input type="email" name="email"></input>
-                <input type="password" name="password"></input>
-                <LoginButton> </LoginButton>
-                </div>
+            return <HOFLoginForm> </HOFLoginForm>
         }
     }
 }
 
-class LoginButton extends React.Component {
+//change this name please
+//class LoginButton extends React.Component {
+class HOFLoginForm extends React.Component {
+    constructor() {
+        super()
+        
+        this.login = this.login.bind(this) // react es6 doesn't auto bind methods to itself
+    }
+    
     render() {
-        return <button onClick={this.login}
-            >Login
-        </button>
+        return <div>
+            <input
+        type="email"
+        name="email"
+        ref={(c) => this.email_input = c}
+        ></input>
+            <input
+        type="password"
+        name="password"
+        ref={(c) => this.password_input = c}
+            ></input>
+            <button onClick={this.login}>
+            Login
+           </button>
+           </div>
     }
 
     login() {
         console.log("Logging In!")
         console.log("Store state:")
         console.log(store.getState())
-        store.dispatch(loginAction("Tyler", "xxxxx")) // change this to props are something
+        console.log("inputs refs:")
+        let email = ReactDOM.findDOMNode(this.email_input).value
+        let password =
+            ReactDOM.findDOMNode(this.password_input).value
+        console.log(email)
+        console.log(password)
+        store.dispatch(loginAction(email, password))
         // can change this with react-redo connect
         console.log("New state:")
         console.log(store.getState())
