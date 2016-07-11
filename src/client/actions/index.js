@@ -23,7 +23,7 @@ export function loginAction(email, password) {
         console.log("password")
         console.log(password)
 
-        fetch('/login', {
+        return fetch('/login', {
             method: 'post',
             headers: {
                 'Accept': 'application/json',
@@ -32,23 +32,45 @@ export function loginAction(email, password) {
             body: JSON.stringify({
                  username: email,
                  password: password
-//                username: "user",
-//                password: "user"
 
             })
         }).then(response => {
             console.log('got response');
-            return response.text()
-        }).then(text => {
-            console.log(text); // evidently we have to extract the response like this
+            if (response.status >= 200 && response.status < 300) {
+                return response.text()
+            } else {
+                let error = new Error(response.statusText)
+                error.response = response
+                throw error
+            }
+        }).then(json => {  // {user: user, token: Base64String }
+            console.log(json); // evidently we have to extract the response like this to force/eval the promise/thin
+            dispatch(receivedAuthorization(json)) //transition to logged in state
         }).catch(err => {
             console.log(err);
+            // flash invalid login credential
         });
-        
-        return {
-            type: "LOGIN",
-            email: email,
-            password: password
-        };
     }
 }
+
+// move this to lib or helpers
+function checkStatus(response) {
+    if (response.status >= 200 && response.status < 300) {
+        return response
+          
+    } else {
+        var error = new Error(response.statusText)
+        error.response = response
+        throw error
+    }
+}
+
+
+export function receivedAuthorization(json) {
+    return {
+        type: "LOGIN",
+        user: json.user,
+        jwt: json.token
+    }
+}
+

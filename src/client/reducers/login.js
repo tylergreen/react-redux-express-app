@@ -2,7 +2,9 @@ const login = (state, action) => {
     switch(action.type) {
     case 'LOGIN':
         return Object.assign({}, state, {
-            isLoggedIn: true
+            isLoggedIn: true,
+            user: action.user,
+            jwt: action.jwt
         })
     case 'LOGOUT':
         return Object.assign({}, state, {

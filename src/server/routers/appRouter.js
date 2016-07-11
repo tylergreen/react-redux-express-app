@@ -1,5 +1,6 @@
 var passport = require('passport'),
-    signupController = require('../controllers/signupController.js')
+    signupController = require('../controllers/signupController.js'),
+    jwt = require('jsonwebtoken')
 
 module.exports = function(express) {
   var router = express.Router()
@@ -14,12 +15,21 @@ module.exports = function(express) {
   router.get('/signup', signupController.show)
   router.post('/signup', signupController.signup)
 
-  router.post('/login',
+    router.post('/login',
                 passport.authenticate('local'),
                 function(req, res) {
-                    res.send("Succssefully authentiated yay!")
-                }
-             )
+                    // send JWT
+                    console.log("REQ USER OBJECT")
+                    console.log(req.user)
+                    var profile = {
+                        user_id: req.user.id
+                    }
+                    // configure this properly
+                    var secret = "SUPER-UNGUESSABLE-SECRET"  
+                  var token = jwt.sign(profile, secret, {expiresInMinutes: 30}); // configure better
+                    res.json({user: req.user, token: token})
+              }
+               )
 
     router.post('/echo',
                 function(req, res) {

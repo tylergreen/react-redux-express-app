@@ -7,7 +7,11 @@ module.exports = function(app) {
   app.use(passport.initialize())
   app.use(passport.session())
 
-  passport.use(new LocalStrategy(
+    passport.use(new LocalStrategy(
+        {
+//            passReqToCallback: true,
+            session: false
+        },
     function(username, password, done) {
       Model.User.findOne({
         where: {

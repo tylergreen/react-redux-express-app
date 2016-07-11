@@ -10,9 +10,14 @@ var express = require('express'),
     session = require('express-session'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
-    jsonParser = bodyParser.json()
+    jsonParser = bodyParser.json(),
+    expressJwt = require('express-jwt')
 
 var port = process.env.PORT || 8080
+
+// configure this correctly
+var secret = "secret";
+app.use('/api', expressJwt({secret: secret}));
 
 app.use(cookieParser())
 app.use(session({ secret: '4564f6s4fdsfdfd', resave: false, saveUninitialized: false }))
