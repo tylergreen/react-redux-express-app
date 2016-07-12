@@ -7,11 +7,30 @@
     
 // }
 
+// change email to expire the JWT 
 export const logoutAction = (email) => {
     return {
         type: "LOGOUT",
         email: email
     }
+}
+
+export function getMessage(jwt) {
+    return (dispatch) => {
+        
+        //don't need to update the state 
+        fetch('/protected', {
+            headers: {
+                "Authorization" :  'Bearer ' + jwt
+            }
+        }).then(resp => resp.text()
+               ).then(message => {
+                   console.log("secret message is:")
+                   console.log(message)
+               }).catch(err => {
+                   console.log(err);
+               })
+                   }
 }
 
 export function loginAction(email, password) {
@@ -45,7 +64,8 @@ export function loginAction(email, password) {
             }
         }).then(json => {  // {user: user, token: Base64String }
             console.log(json); // evidently we have to extract the response like this to force/eval the promise/thin
-            dispatch(receivedAuthorization(json)) //transition to logged in state
+            var parsed_json = JSON.parse(json)
+            return dispatch(receivedAuthorization(parsed_json)) //transition to logged in state
         }).catch(err => {
             console.log(err);
             // flash invalid login credential

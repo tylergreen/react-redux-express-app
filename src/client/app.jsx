@@ -9,7 +9,7 @@ import thunk from 'redux-thunk'
 import fetch from 'fetch-ponyfill'
 
 import login from './reducers/login'
-import {loginAction, logoutAction} from './actions/index'
+import {loginAction, logoutAction, getMessage} from './actions/index'
 
 //let _ = require('lodash/fp')
 let _ = require('lodash')
@@ -20,15 +20,52 @@ let store = createStore(login,
                         {isLoggedIn: false},
                         applyMiddleware(thunk));
 
+class JWTTest extends React.Component {
+    render() {
+            return <button onClick={this.fetch_message}>Make Request</button>
+    }
+
+    fetch_message(){
+        console.log("store is")
+
+        console.log(store.getState().jwt)
+        let token = store.getState().jwt
+        store.dispatch(getMessage(token))
+    }
+}
+
 
 class LoginForm extends React.Component {
     render() {
         if(this.props.loggedIn){
-            return <LogoutButton> </LogoutButton>
+            return <UserProfileForm user={this.props.user}> </UserProfileForm>
         }
         else {
             return <HOFLoginForm> </HOFLoginForm>
         }
+    }
+}
+
+class UserProfileForm extends React.Component {
+    render() {
+        return <div>
+
+            <JWTTest></JWTTest>
+        
+            <div>
+            User Name: { this.props.user.username }
+        </div>
+            <div>
+            First Name: { this.props.user.firstName }
+        </div>
+            <div>
+            Last Name: { this.props.user.lastName }
+        </div>
+            <div>
+            Email: { this.props.user.email }
+            </div>
+            <LogoutButton> </LogoutButton>
+            </div>
     }
 }
 
@@ -82,17 +119,16 @@ class LogoutButton extends React.Component {
     }
 
     logOut() {
-        console.log("Logging Out Bye!")
+        console.log("Logging Out Bye Tyler!")
         console.log("Store state:")
         console.log(store.getState())
-        store.dispatch(logoutAction("monkey@gmail")) // change this to props are something
+        store.dispatch(logoutAction("monkey@gmail")) // change this to expire the JWT
         console.log("updated state:")
         console.log(store.getState())
     }
 }
 
 class Target extends React.Component {
-
     render() {
         return <canvas id={this.props.name}></canvas> ;
     }
@@ -154,12 +190,16 @@ class TodoItem extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+    console.log("state is...")
+    console.log(state)
     return {
-        loggedIn: state.isLoggedIn
+        loggedIn: state.isLoggedIn,
+        user: state.user
     }
 }
 
 // connect will return a new component
+// can get rid of this if we just embed in toggle login
 let ColorTarget = connect(
     mapStateToProps
 )(Target)
@@ -167,7 +207,6 @@ let ColorTarget = connect(
 let ToggleLogin = connect(
     mapStateToProps
 )(LoginForm)
-
 
 console.log(document.getElementById('content'));
 

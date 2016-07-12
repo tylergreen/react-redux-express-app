@@ -13,9 +13,16 @@ module.exports = function(express) {
   }
   
   router.get('/signup', signupController.show)
-  router.post('/signup', signupController.signup)
+    router.post('/signup', signupController.signup)
 
-    router.post('/login',
+    router.get('/protected',
+                passport.authenticate('jwt', {session: false}), // can we configure session to be false?
+                (req, res) => {
+                    res.send('TYLOR RULEZ DUH')
+                }
+               )
+    
+  router.post('/login',
                 passport.authenticate('local'),
                 function(req, res) {
                     // send JWT
@@ -32,7 +39,7 @@ module.exports = function(express) {
                )
 
     router.post('/echo',
-                function(req, res) {
+                (req, res) => {
                     console.log("Debug output")
                     console.log(req)
                     console.log(req.body)
