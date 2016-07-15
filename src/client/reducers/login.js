@@ -10,6 +10,12 @@ const login = (state, action) => {
         return Object.assign({}, state, {
             isLoggedIn: false
         })
+    case 'UPDATE_USER':
+        console.log('updating user.  action.user is')
+        console.log(action.user)
+        return Object.assign({}, state, {
+            user: action.user
+        })
     default:
         return state
     }

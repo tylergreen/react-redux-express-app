@@ -1,6 +1,7 @@
 var passport = require('passport'),
     signupController = require('../controllers/signupController.js'),
-    jwt = require('jsonwebtoken')
+    jwt = require('jsonwebtoken'),
+    Model = require('../model/models.js')
 
 module.exports = function(express) {
   var router = express.Router()
@@ -20,6 +21,42 @@ module.exports = function(express) {
                 (req, res) => {
                     res.send('TYLOR RULEZ DUH')
                 }
+              )
+
+    router.post('/edit-profile',
+                passport.authenticate('jwt', {session: false}),
+                (req, res) => {
+                    // update profile in the DB
+                    // find the user
+                    // update the user fields
+                    // send back the user like in login
+                    console.log("req body")
+                    console.log(req.body)
+                    console.log("req body")
+                    console.log(req.user)
+                    //                    res.send('OK success')
+                    // update a the fields to test but don't save to DB yet
+                    Model.User.upsert(
+                        {   id: req.user.id,
+                            username: req.user.username,
+                            firstName: req.body.firstName,
+                            lastName: req.body.lastName,
+                            email: req.body.email
+                        }).catch(err => {
+                            console.log("upsert error")
+                            console.log(err)
+                        })
+           
+                    var user = Object.assign({}, req.user.dataValues, { firstName: req.body.firstName,
+                                                                     lastName: req.body.lastName,
+                                                                     email: req.body.email
+                                                                   })
+                    
+                    console.log("updated_user ")
+                    console.log(user)
+
+                    res.json({user: user})
+                }
                )
     
   router.post('/login',
@@ -29,7 +66,7 @@ module.exports = function(express) {
                     console.log("REQ USER OBJECT")
                     console.log(req.user)
                     var profile = {
-                        user_id: req.user.id
+                        user_id: req.user.id,
                     }
                     // configure this properly
                     var secret = "SUPER-UNGUESSABLE-SECRET"  

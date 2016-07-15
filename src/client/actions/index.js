@@ -1,12 +1,3 @@
-// export const loginAction = (email, password) => {
-//     return {
-//         type: "LOGIN",
-//         email: email,
-//         password: password
-//     }
-    
-// }
-
 // change email to expire the JWT 
 export const logoutAction = (email) => {
     return {
@@ -19,18 +10,65 @@ export function getMessage(jwt) {
     return (dispatch) => {
         
         //don't need to update the state 
-        fetch('/protected', {
+        fetch('/edit-profile', {
+            method: 'POST',
             headers: {
-                "Authorization" :  'Bearer ' + jwt
-            }
+                "Authorization" :  'Bearer ' + jwt,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: "Tyler",
+                foo: "bar"
+            })
         }).then(resp => resp.text()
                ).then(message => {
-                   console.log("secret message is:")
+                   console.log("response is:")
                    console.log(message)
                }).catch(err => {
                    console.log(err);
                })
                    }
+}
+
+export function saveProfileAction(user, jwt){
+    return (dispatch) => {
+        console.log("user is")
+        console.log(user)
+        return fetch('/edit-profile', {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                "Authorization" :  'Bearer ' + jwt,
+            },
+        body: JSON.stringify({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email
+        }
+                            )
+    }
+                ).then(response => {
+                    if (response.status >= 200 && response.status < 300) {
+                        return response.text()
+                    } else {
+                        let error = new Error(response.statusText)
+                        error.response = response
+                        throw error
+                    }
+                }).then(json => {
+                    console.log("updated user json")
+                    let parsed_json = JSON.parse(json)
+                    let user = parsed_json.user
+                    console.log(user)
+                    return dispatch(updateUser(user))
+                }).catch(err => {
+                    console.log(err);
+                    // return the same state 
+                    // flash invalid login credential
+                })
+                    }
 }
 
 export function loginAction(email, password) {
@@ -56,7 +94,7 @@ export function loginAction(email, password) {
         }).then(response => {
             console.log('got response');
             if (response.status >= 200 && response.status < 300) {
-                return response.text()
+                return response.text()  
             } else {
                 let error = new Error(response.statusText)
                 error.response = response
@@ -86,11 +124,18 @@ function checkStatus(response) {
 }
 
 
-export function receivedAuthorization(json) {
+function receivedAuthorization(json) {
     return {
         type: "LOGIN",
         user: json.user,
         jwt: json.token
+    }
+}
+
+function updateUser(user) {
+    return {
+        type: "UPDATE_USER",
+        user: user
     }
 }
 

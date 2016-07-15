@@ -9,7 +9,7 @@ import thunk from 'redux-thunk'
 import fetch from 'fetch-ponyfill'
 
 import login from './reducers/login'
-import {loginAction, logoutAction, getMessage} from './actions/index'
+import {loginAction, logoutAction, getMessage, saveProfileAction} from './actions/index'
 
 //let _ = require('lodash/fp')
 let _ = require('lodash')
@@ -47,6 +47,12 @@ class LoginForm extends React.Component {
 }
 
 class UserProfileForm extends React.Component {
+    constructor() {
+        super()
+        
+        this.submit = this.submit.bind(this) // react es6 doesn't auto bind methods to itself
+    }
+
     render() {
         return <div>
 
@@ -57,15 +63,40 @@ class UserProfileForm extends React.Component {
         </div>
             <div>
             First Name: { this.props.user.firstName }
+            <input type="text"
+        ref={(c) => this.firstName = c}
+            ></input>
+
         </div>
             <div>
             Last Name: { this.props.user.lastName }
+
+            <input type="text"
+        ref={(c) => this.lastName = c}
+            ></input>
+
         </div>
             <div>
             Email: { this.props.user.email }
-            </div>
+
+            <input type="email"
+        ref={(c) => this.email= c}
+            ></input>
+
+        </div>
+
+            <button onClick={this.submit}>Save Changes</button>
+            
             <LogoutButton> </LogoutButton>
             </div>
+    }
+
+    submit() {
+        store.dispatch(saveProfileAction({
+            firstName: ReactDOM.findDOMNode(this.firstName).value,
+            lastName: ReactDOM.findDOMNode(this.lastName).value,
+            email: ReactDOM.findDOMNode(this.email).value},
+                                         store.getState().jwt))         
     }
 }
 
@@ -192,6 +223,8 @@ class TodoItem extends React.Component {
 const mapStateToProps = (state) => {
     console.log("state is...")
     console.log(state)
+    console.log("user is...")
+    console.log(state.user)
     return {
         loggedIn: state.isLoggedIn,
         user: state.user
