@@ -1,5 +1,7 @@
 var bcrypt = require('bcrypt'),
-    Model = require('../model/models.js')
+    Model = require('../model/models.js'),
+    config = require('config'),
+    jwt = require('jsonwebtoken')
 
 module.exports.signup = function(req, res) {
   var email = req.body.email
@@ -19,18 +21,27 @@ module.exports.signup = function(req, res) {
     }
 
     Model.User.create(newUser).then((user) => {
-        var profile = {
+        var server_profile = {
             user_id: user.id,
         }
 
+        var client_profile = {
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+        }
+        
         // refactor into util or helper
         var secret = config.get("jwt-secret-key")
         var jwtExpiration = config.get("jwt-expiration")
-        var token = jwt.sign(profile, secret, jwtExpiration);
+        var token = jwt.sign(server_profile, secret, jwtExpiration);
         
-        res.json({user: user, token: token})
+        res.json({user: client_profile, token: token})
     }
                                    ).catch(function(error) {
-                                       res.json({'error': error})
+                                       console.log(error)
+                                       res.json({'error': error} // should just respone with 500
+                                               )
                                    })
                                        }
