@@ -1,15 +1,17 @@
 import Paper from 'paper'
 import React from 'react'
 import ReactDOM from 'react-dom'
-
 import { createStore, applyMiddleware } from 'redux'
 import { Provider, connect } from 'react-redux'
 import thunk from 'redux-thunk'
-
 import fetch from 'fetch-ponyfill'
-
 import login from './reducers/login'
-import {loginAction, logoutAction, getMessage, saveProfileAction} from './actions/index'
+import {
+    loginAction, logoutAction, getMessage,
+    saveProfileAction, registerAction
+} from './actions/index'
+
+import { Router, Route, Link, browserHistory } from 'react-router'
 
 //let _ = require('lodash/fp')
 let _ = require('lodash')
@@ -220,6 +222,57 @@ class TodoItem extends React.Component {
     }
 }
 
+class Home extends React.Component {
+    render(){
+        return(<div>
+               <h1> Tyler Rules! </h1>
+               <Link to="/register">Sign Up</Link>
+               <ToggleLogin></ToggleLogin>
+               </div>
+              )
+    }
+}
+
+class Registration extends React.Component {
+    constructor() {
+        super()
+        
+        this.register = this.register.bind(this) // react es6 doesn't auto bind methods to itself
+    }
+
+    render(){
+        return (<div>
+                <h1> Register so we identify you</h1>
+                <div>
+                <input
+                type="email"
+                name="email"
+                ref={(c) => this.email_input = c}
+                ></input>
+                </div>
+                <input
+                type="password"
+                name="password"
+                ref={(c) => this.password_input = c}
+                ></input>
+                <button onClick={this.register}>
+                Sign Up!
+                </button>
+                </div>
+        )
+    }
+
+    register(){
+        let email = ReactDOM.findDOMNode(this.email_input).value
+        let password =
+            ReactDOM.findDOMNode(this.password_input).value
+        store.dispatch(registerAction(email, password))
+
+    }
+    
+}
+
+
 const mapStateToProps = (state) => {
     console.log("state is...")
     console.log(state)
@@ -244,9 +297,14 @@ let ToggleLogin = connect(
 console.log(document.getElementById('content'));
 
 ReactDOM.render(
-        <Provider store={store}>
+        <Provider store={store} >
         <div>
-        <ToggleLogin> </ToggleLogin>
+        <Router history={browserHistory} >
+        <Route path="/public/" component={Home} />
+        <Route path="login" component={ToggleLogin} />
+        <Route path="register" component={Registration} />
+        </Router>
+        
         <ColorTarget name='target1' x={55} y={55} size={50} />
         </div>
         </Provider>,

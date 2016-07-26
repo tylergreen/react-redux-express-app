@@ -31,6 +31,39 @@ export function getMessage(jwt) {
                    }
 }
 
+export function registerAction(email, password){
+    return (dispatch) => {
+        return fetch('/signup', {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        }).then(response => {
+            if (response.status >= 200 && response.status < 300){
+                return response.text()
+            }
+            else {
+                let error = new Error(response.statusText)
+                error.response = response
+                throw error
+            }
+        }).then(json => {
+            console.log("updated user json")
+            let parsed_json = JSON.parse(json)
+            return dispatch(receivedAuthorization(parsed_json)) //transition to logged in state
+        }).catch(err => {
+            console.log(err);
+            // flash invalid login credential
+        })
+            }
+}
+
+
 export function saveProfileAction(user, jwt){
     return (dispatch) => {
         console.log("user is")
@@ -46,29 +79,27 @@ export function saveProfileAction(user, jwt){
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email
-        }
-                            )
-    }
-                ).then(response => {
-                    if (response.status >= 200 && response.status < 300) {
-                        return response.text()
-                    } else {
-                        let error = new Error(response.statusText)
-                        error.response = response
-                        throw error
-                    }
-                }).then(json => {
-                    console.log("updated user json")
-                    let parsed_json = JSON.parse(json)
-                    let user = parsed_json.user
-                    console.log(user)
-                    return dispatch(updateUser(user))
-                }).catch(err => {
-                    console.log(err);
+        })
+        }).then(response => {
+            if (response.status >= 200 && response.status < 300) {
+                return response.text()
+            } else {
+                let error = new Error(response.statusText)
+                error.response = response
+                throw error
+            }
+        }).then(json => {
+            console.log("updated user json")
+            let parsed_json = JSON.parse(json)
+            let user = parsed_json.user
+            console.log(user)
+            return dispatch(updateUser(user))
+        }).catch(err => {
+            console.log(err);
                     // return the same state 
-                    // flash invalid login credential
-                })
-                    }
+            // flash invalid login credential
+        })
+            }
 }
 
 export function loginAction(email, password) {

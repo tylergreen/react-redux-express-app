@@ -1,19 +1,20 @@
 var passport = require('passport'),
+    config = require('config'),
     LocalStrategy = require('passport-local').Strategy,
     bcrypt = require('bcrypt'),
     Model = require('./model/models.js')
 
-module.exports = function(app) {
-  app.use(passport.initialize())
-//  app.use(passport.session())
+module.exports = (app) => {
+    app.use(passport.initialize())
 
     var JwtStrategy = require('passport-jwt').Strategy,
         ExtractJwt = require('passport-jwt').ExtractJwt;
-    var opts = {}
-    opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('Bearer');
-    opts.secretOrKey = "SUPER-UNGUESSABLE-SECRET" // this is defined in 2 different places. Move to a single config (appRouter.js has the other)
-    // opts.issuer = "accounts.examplesoft.com";
-    //opts.audience = "yoursite.net";
+    
+    var opts = {
+        jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
+        secretOrKey: config.get("jwt-secret-key")
+    }
+    
     passport.use(new JwtStrategy(
         opts,
         (jwt_payload, done) => {
@@ -35,10 +36,10 @@ module.exports = function(app) {
 //            passReqToCallback: true,
             session: false
         },
-    function(username, password, done) {
+    function(email, password, done) {
       Model.User.findOne({
         where: {
-          'username': username
+          'email': email  // make this an index
         }
       }).then(function (user) {
         if (user == null) {

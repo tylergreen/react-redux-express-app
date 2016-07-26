@@ -22,10 +22,3 @@ const login = (state, action) => {
 }
 
 export default login
-
-        // if(action.email == "Tyler"){
-        //     return Object.assign({}, state, {
-        //         isLoggedIn: true
-        //     })
-        // } else
-        //     return state
