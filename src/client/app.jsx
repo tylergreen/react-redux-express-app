@@ -5,10 +5,17 @@ import { createStore, applyMiddleware } from 'redux'
 import { Provider, connect } from 'react-redux'
 import thunk from 'redux-thunk'
 import fetch from 'fetch-ponyfill'
+import ReactInterval from 'react-interval'
+
 import login from './reducers/login'
 import {
     loginAction, logoutAction, getMessage,
-    saveProfileAction, registerAction
+    saveProfileAction, registerAction,
+    startTimer,
+    stopTimer,
+    resumeTimer,
+    resetTimer,
+    recordTimer
 } from './actions/index'
 
 import { Router, Route, Link, browserHistory } from 'react-router'
@@ -19,7 +26,11 @@ let _ = require('lodash')
 console.log(login)
 
 let store = createStore(login,
-                        {isLoggedIn: false},
+                        {isLoggedIn: false,
+                         timer: {
+                             state: "Ready"
+                         }
+                        },
                         applyMiddleware(thunk));
 
 class JWTTest extends React.Component {
@@ -40,7 +51,9 @@ class JWTTest extends React.Component {
 class LoginForm extends React.Component {
     render() {
         if(this.props.loggedIn){
-            return <UserProfileForm user={this.props.user}> </UserProfileForm>
+            return <div>
+                <UserProfileForm user={this.props.user}> </UserProfileForm>
+                </div>
         }
         else {
             return <HOFLoginForm> </HOFLoginForm>
@@ -190,7 +203,7 @@ class Target extends React.Component {
         }
         
         Paper.view.draw();
-        console.log("successu ");
+        console.log("successu ")
     }
 
     color(isLoggedIn) {
@@ -227,9 +240,180 @@ class Home extends React.Component {
         return(<div>
                <h1> Tyler Rules! </h1>
                <Link to="/register">Sign Up</Link>
+               
+                <ActiveTimer></ActiveTimer>
+               <TimerEx2></TimerEx2>
+
+               
                <ToggleLogin></ToggleLogin>
                </div>
               )
+    }
+}
+
+class Timer extends React.Component {
+    render() {
+        return <div>
+            <h1>Timer</h1>
+            <TimerDisplay timer_state={this.props.timer_state}></TimerDisplay>
+            <TimerButtons timer_state={this.props.timer_state}></TimerButtons>
+          </div>
+    }
+}
+
+class TimerDisplay extends React.Component {
+    constructor(){
+        super()
+        this.state = {count: 0 }
+    
+        this.isRunning = this.isRunning.bind(this)
+    }
+
+    isRunning() {
+        console.log("props are")
+        console.log(this.props)
+        return this.props.timer_state == 'Running'
+    }
+
+    render() {
+        const {count} = this.state
+
+        return (
+                <div>
+                {count}
+                <ReactInterval timeout={1000} enabled={this.isRunning()}
+
+            callback={ () => {
+                this.state.count += 1
+                this.setState(this.state)
+            }
+                     } />
+                </div>)
+    }
+
+    
+
+}
+
+class TimerButtons extends React.Component {
+    render(){
+        return this.updateButtons()
+    }
+
+    updateButtons(){
+        console.log("updating buttons")
+        if(this.isReady()){
+            return <StartButton></StartButton>
+        } else if (this.isRunning()){
+            return <div>
+                <StopButton></StopButton>
+                <LapButton></LapButton>
+                </div>
+        } else if (this.isStopped()) {
+            return <div>
+                <ResumeButton></ResumeButton>
+                <ResetButton></ResetButton>
+                <RecordButton></RecordButton>
+                </div>
+        }
+        
+        else {
+            console.log("State Error Timer should be in one of 3 states")
+            console.log(this.props.timer_state)
+            console.log(store.getState())
+            
+            return <StartButton></StartButton>
+        }
+    }
+
+    isReady() {
+        return this.props.timer_state == 'Ready'
+    }
+
+    isRunning (){
+        return (this.props.timer_state == 'Running')
+    }
+
+    isStopped(){
+        return (this.props.timer_state == 'Stopped')
+    }
+}
+
+const mapTimerStateToProps = (state) => {
+    console.log("state is ")
+    console.log(state)
+    return {
+        timer_state: state.timer.state
+    }
+}
+
+// pattern is do do this for a whole list of componenets
+// instead of passing down from parent
+let ActiveTimer = connect(mapTimerStateToProps)(Timer)
+
+class StartButton extends React.Component {
+    render(){
+        return <button onClick={this.startTimer}> Start </button>
+    }
+
+    startTimer(){
+        console.log("Start Timer")
+        store.dispatch(startTimer())
+    }
+}
+
+
+class StopButton extends React.Component {
+    render(){
+        return <button onClick={this.stopTimer}> Stop </button>
+    }
+
+    stopTimer(){
+        console.log("Stop Timer")
+        store.dispatch(stopTimer())
+    }
+}
+
+class LapButton extends React.Component {
+    render(){
+        return <button onClick={this.lapTimer}> Lap </button>
+    }
+
+    lapTimer(){
+        console.log("Lap Timer")
+    }
+}
+
+class ResumeButton extends React.Component {
+    render(){
+        return <button onClick={this.resumeTimer}> Resume </button>
+    }
+
+    resumeTimer() {
+        console.log("Reset Timer")
+        store.dispatch(resumeTimer())
+    }
+}
+
+class ResetButton extends React.Component {
+    render(){
+        return <button onClick={this.resetTimer}> Reset </button>
+    }
+
+    resetTimer() {
+        console.log("Reset Timer")
+        store.dispatch(Resettimer())
+    }
+}
+
+
+class RecordButton extends React.Component {
+    render(){
+        return <button onclick={this.recordTimer}> Record </button>
+    }
+
+    recordTimer(){
+        console.log("recording")
     }
 }
 
@@ -242,7 +426,7 @@ class Registration extends React.Component {
 
     render(){
         return (<div>
-                <h1> Register so we identify you</h1>
+                <h1> Register so we can identify you</h1>
                 <div>
                 <input
                 type="email"
@@ -269,9 +453,7 @@ class Registration extends React.Component {
         store.dispatch(registerAction(email, password))
 
     }
-    
 }
-
 
 const mapStateToProps = (state) => {
     console.log("state is...")
@@ -281,6 +463,46 @@ const mapStateToProps = (state) => {
     return {
         loggedIn: state.isLoggedIn,
         user: state.user
+    }
+}
+
+// react-interval example
+class TimerEx2 extends React.Component{
+    constructor(){
+        super()
+        this.state = {count: 0,
+                      running: false}
+
+        //this is less than preferable
+        this.startTimer = this.startTimer.bind(this)
+        this.stopTimer = this.stopTimer.bind(this)
+    }
+
+    startTimer(){
+        this.setState({running: true})
+    }
+
+    stopTimer(){
+        this.setState({running: false})
+    }
+    
+    render(){
+        const {count} = this.state
+
+        return (
+                <div>
+                <button onClick={this.startTimer}>Start</button>
+                <button onClick={this.stopTimer}> Stop </button>
+                {count}
+                <ReactInterval timeout={1000} enabled={this.state.running}
+
+            callback={ () => {
+                this.state.count += 1
+                this.setState(this.state)
+            }
+                     } />
+                </div>
+        )
     }
 }
 
@@ -303,6 +525,8 @@ ReactDOM.render(
         <Route path="/public/" component={Home} />
         <Route path="login" component={ToggleLogin} />
         <Route path="register" component={Registration} />
+        <Route path="timer" component={ActiveTimer}
+        />
         </Router>
         
         <ColorTarget name='target1' x={55} y={55} size={50} />
@@ -311,5 +535,3 @@ ReactDOM.render(
     document.getElementById('content')
 )
 
-        
-        // document.getElementById('content')

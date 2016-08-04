@@ -170,3 +170,37 @@ function updateUser(user) {
     }
 }
 
+// Timer Actions
+
+
+export function resetTimer(){
+    return {
+        type: "RESET_TIMER"
+    }
+}
+
+export function resumeTimer(){
+    return {
+        type: "RESUME_TIMER"
+    }
+}
+
+export function startTimer(){
+    return {
+        type: "START_TIMER"
+    }
+}
+
+export function stopTimer(){
+    return {
+        type: "STOP_TIMER"
+    }
+}
+
+export function recordTimer(){
+    return {
+        type: "RECORD_TIMER"
+    }
+}
+
+

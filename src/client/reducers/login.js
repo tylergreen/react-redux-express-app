@@ -16,6 +16,30 @@ const login = (state, action) => {
         return Object.assign({}, state, {
             user: action.user
         })
+    case 'START_TIMER':
+        return Object.assign({}, state, {
+            timer: {
+                state: 'Running'
+            }
+        })
+    case 'STOP_TIMER':
+        return Object.assign({}, state, {
+            timer: {
+                state: 'Stopped'
+            }
+        })
+    case 'RESET_TIMER':
+        return Object.assign({}, state, {
+            timer: {
+                state: 'Ready'
+            }
+        })
+    case 'RESUME_TIMER':
+        return Object.assign({}, state, {
+            timer: {
+                state: 'Running'
+            }
+        })
     default:
         return state
     }
