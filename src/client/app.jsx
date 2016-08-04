@@ -275,12 +275,17 @@ class TimerDisplay extends React.Component {
         return this.props.timer_state == 'Running'
     }
 
-    render() {
-        const {count} = this.state
+    count(){
+        if(this.props.timer_state == "Ready")
+            this.state.count = 0
+        
+        return this.state.count
+    }
 
+    render() {
         return (
                 <div>
-                {count}
+                {this.count()}
                 <ReactInterval timeout={1000} enabled={this.isRunning()}
 
             callback={ () => {
@@ -390,7 +395,7 @@ class ResumeButton extends React.Component {
     }
 
     resumeTimer() {
-        console.log("Reset Timer")
+        console.log("Resuming Timer")
         store.dispatch(resumeTimer())
     }
 }
@@ -402,7 +407,7 @@ class ResetButton extends React.Component {
 
     resetTimer() {
         console.log("Reset Timer")
-        store.dispatch(Resettimer())
+        store.dispatch(resetTimer())
     }
 }
 
