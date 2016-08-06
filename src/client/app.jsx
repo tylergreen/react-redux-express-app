@@ -33,21 +33,6 @@ let store = createStore(login,
                         },
                         applyMiddleware(thunk));
 
-class JWTTest extends React.Component {
-    render() {
-            return <button onClick={this.fetch_message}>Make Request</button>
-    }
-
-    fetch_message(){
-        console.log("store is")
-
-        console.log(store.getState().jwt)
-        let token = store.getState().jwt
-        store.dispatch(getMessage(token))
-    }
-}
-
-
 class LoginForm extends React.Component {
     render() {
         if(this.props.loggedIn){
@@ -70,9 +55,6 @@ class UserProfileForm extends React.Component {
 
     render() {
         return <div>
-
-            <JWTTest></JWTTest>
-        
             <div>
             User Name: { this.props.user.username }
         </div>

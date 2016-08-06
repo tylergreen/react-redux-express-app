@@ -6,31 +6,6 @@ export const logoutAction = (email) => {
     }
 }
 
-export function getMessage(jwt) {
-    return (dispatch) => {
-        
-        //don't need to update the state 
-        fetch('/edit-profile', {
-            method: 'POST',
-            headers: {
-                "Authorization" :  'Bearer ' + jwt,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: "Tyler",
-                foo: "bar"
-            })
-        }).then(resp => resp.text()
-               ).then(message => {
-                   console.log("response is:")
-                   console.log(message)
-               }).catch(err => {
-                   console.log(err);
-               })
-                   }
-}
-
 export function registerAction(email, password){
     return (dispatch) => {
         return fetch('/signup', {
