@@ -16,7 +16,7 @@ var express = require('express'),
 
 var port = config.get('port');
 
-app.use('/public', express.static(path.join(__dirname, '/public')))
+app.use('/', express.static(path.join(__dirname, '/public')))
 app.use('/styles', express.static(path.join(__dirname, '/styles')))
 app.set('views', __dirname + '/views')
 

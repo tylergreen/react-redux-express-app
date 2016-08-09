@@ -396,7 +396,7 @@ class ResetButton extends React.Component {
 
 class RecordButton extends React.Component {
     render(){
-        return <button onclick={this.recordTimer}> Record </button>
+        return <button onClick={this.recordTimer}> Record </button>
     }
 
     recordTimer(){
@@ -509,7 +509,7 @@ ReactDOM.render(
         <Provider store={store} >
         <div>
         <Router history={browserHistory} >
-        <Route path="/public/" component={Home} />
+        <Route path="/" component={Home} />
         <Route path="login" component={ToggleLogin} />
         <Route path="register" component={Registration} />
         <Route path="timer" component={ActiveTimer}
