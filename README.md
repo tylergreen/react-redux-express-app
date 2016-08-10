@@ -1,3 +1,11 @@
+# how to server run tests
+1. start the server
+$ npm start
+
+2. run test suite
+$ mocha test/server
+
+
 # Authentication Quickstart with Express, Passport and Sequelize
 
 This is a quick-start application that demonstrates basic authentication using Passport and Sequelize. It is built with:

@@ -7,6 +7,7 @@ import thunk from 'redux-thunk'
 import fetch from 'fetch-ponyfill'
 import ReactInterval from 'react-interval'
 import reactCSS from 'reactcss'
+import moment from 'moment'
 
 import login from './reducers/login'
 import {
@@ -223,9 +224,12 @@ class Home extends React.Component {
         return(<div>
                <h1> Tyler Rules! </h1>
                <Link to="/register">Sign Up</Link>
+               <Link to="/timer">Timer</Link>
                
                 <ActiveTimer></ActiveTimer>
                <TimerEx2></TimerEx2>
+               
+               <ColorTarget name='target1' x={55} y={55} size={50} />
 
                
                <ToggleLogin></ToggleLogin>
@@ -267,10 +271,30 @@ class TimerDisplay extends React.Component {
         return this.state.count
     }
 
+
+        format(count){
+            var seconds = count % 60
+            var minutes = Math.floor(count / 60) % 60
+            var hours = Math.floor(count / 360) % 60
+        
+            hours = ("0" + hours).slice(-2)
+            minutes = ("0" + minutes).slice(-2)
+            seconds = ("0" + seconds).slice(-2)
+        
+            return `${hours}:${minutes}:${seconds}`
+        }
+
     render() {
+        const styles = reactCSS({
+            'default': {
+                display: {
+                    fontSize: '2em',
+                    
+                }}})
+
         return (
-                <div>
-                {this.count()}
+                <div style={styles.display}>
+                {this.format(this.count())}
                 <ReactInterval timeout={1000} enabled={this.isRunning()}
 
             callback={ () => {
@@ -288,7 +312,6 @@ class TimerControl extends React.Component {
     }
 
     updateButtons(){
-        console.log("updating buttons")
         if(this.isReady()){
             return <StartButton></StartButton>
         } else if (this.isRunning()){
@@ -299,8 +322,8 @@ class TimerControl extends React.Component {
         } else if (this.isStopped()) {
             return <div>
                 <ResumeButton></ResumeButton>
-                <ResetButton></ResetButton>
                 <RecordButton></RecordButton>
+                <ResetButton></ResetButton>
                 </div>
         }
         
@@ -367,7 +390,7 @@ class StartButton extends React.Component {
     }
 
     render(){
-        return <TimerButton color='green' onClick={this.startTimer} name='Start' />
+        return <TimerButton color='chartreuse' onClick={this.startTimer} name='Start' />
     }
 }
 
@@ -397,7 +420,7 @@ class LapButton extends React.Component {
 class ResumeButton extends React.Component {
     render(){
         return <TimerButton
-        color='light-blue'
+        color='chartreuse'
         name="Resume"
         onClick={this.resumeTimer}/>
     }
@@ -411,7 +434,7 @@ class ResumeButton extends React.Component {
 class ResetButton extends React.Component {
     render() {
         return <TimerButton
-        color='yellow'
+        color='orange'
         name='Reset'
         onClick={this.resetTimer}/>
     }
@@ -504,6 +527,18 @@ class TimerEx2 extends React.Component{
     stopTimer(){
         this.setState({running: false})
     }
+
+    format(count){
+        var seconds = count % 60
+        var minutes = (count / 60) % 60
+        var hours = Math.floor((count / 360) % 60)
+        
+        hours = ("0" + hours).slice(-2)
+        minutes = ("0" + minutes).slice(-2)
+        seconds = ("0" + seconds).slice(-2)
+        
+        return `${hours}:${minutes}:${seconds}`
+    }
     
     render(){
         const {count} = this.state
@@ -512,7 +547,7 @@ class TimerEx2 extends React.Component{
                 <div>
                 <button onClick={this.startTimer}>Start</button>
                 <button onClick={this.stopTimer}> Stop </button>
-                {count}
+                {this.format(count)}
                 <ReactInterval timeout={1000} enabled={this.state.running}
 
             callback={ () => {
@@ -547,8 +582,6 @@ ReactDOM.render(
         <Route path="timer" component={ActiveTimer}
         />
         </Router>
-        
-        <ColorTarget name='target1' x={55} y={55} size={50} />
         </div>
         </Provider>,
     document.getElementById('content')
