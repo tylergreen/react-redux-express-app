@@ -6,6 +6,7 @@ import { Provider, connect } from 'react-redux'
 import thunk from 'redux-thunk'
 import fetch from 'fetch-ponyfill'
 import ReactInterval from 'react-interval'
+import reactCSS from 'reactcss'
 
 import login from './reducers/login'
 import {
@@ -237,8 +238,10 @@ class Timer extends React.Component {
     render() {
         return <div>
             <h1>Timer</h1>
-            <TimerDisplay timer_state={this.props.timer_state}></TimerDisplay>
-            <TimerButtons timer_state={this.props.timer_state}></TimerButtons>
+            <TimerDisplay timer_state={this.props.timer_state}>
+            </TimerDisplay>
+            <TimerControl timer_state={this.props.timer_state}>
+            </TimerControl>
           </div>
     }
 }
@@ -277,12 +280,9 @@ class TimerDisplay extends React.Component {
                      } />
                 </div>)
     }
-
-    
-
 }
 
-class TimerButtons extends React.Component {
+class TimerControl extends React.Component {
     render(){
         return this.updateButtons()
     }
@@ -338,32 +338,55 @@ const mapTimerStateToProps = (state) => {
 // instead of passing down from parent
 let ActiveTimer = connect(mapTimerStateToProps)(Timer)
 
-class StartButton extends React.Component {
-    render(){
-        return <button onClick={this.startTimer}> Start </button>
-    }
-
-    startTimer(){
-        console.log("Start Timer")
-        store.dispatch(startTimer())
+class TimerButton extends React.Component {
+    render() {
+        const styles = reactCSS({
+            'default': {
+                button: {
+                    background: this.props.color,
+                    borderRadius: '28px',
+                    border: '1px solid #18ab29',
+                    display:'inline-block',
+                    cursor:'pointer',
+                    color:'#ffffff',
+                    fontFamily:'Arial',
+                    fontSize:'17px',
+                    padding:'16px 31px',
+                    textDecoration:'none',
+                    textShadow:'0px 1px 0px #2f6627',
+                }
+            }})
+        
+        return <button style={styles.button} onClick={this.props.onClick}> {this.props.name} </button>
     }
 }
 
+class StartButton extends React.Component {
+    startTimer(){
+        store.dispatch(startTimer())
+    }
+
+    render(){
+        return <TimerButton color='green' onClick={this.startTimer} name='Start' />
+    }
+}
 
 class StopButton extends React.Component {
     render(){
-        return <button onClick={this.stopTimer}> Stop </button>
+        return <TimerButton color="red" onClick={this.stopTimer} name="Stop"/>
     }
 
     stopTimer(){
-        console.log("Stop Timer")
         store.dispatch(stopTimer())
     }
 }
 
 class LapButton extends React.Component {
     render(){
-        return <button onClick={this.lapTimer}> Lap </button>
+        return <TimerButton
+        color="yellow"
+        onClick={this.lapTimer}
+        name="Lap" /> 
     }
 
     lapTimer(){
@@ -373,7 +396,10 @@ class LapButton extends React.Component {
 
 class ResumeButton extends React.Component {
     render(){
-        return <button onClick={this.resumeTimer}> Resume </button>
+        return <TimerButton
+        color='light-blue'
+        name="Resume"
+        onClick={this.resumeTimer}/>
     }
 
     resumeTimer() {
@@ -383,8 +409,11 @@ class ResumeButton extends React.Component {
 }
 
 class ResetButton extends React.Component {
-    render(){
-        return <button onClick={this.resetTimer}> Reset </button>
+    render() {
+        return <TimerButton
+        color='yellow'
+        name='Reset'
+        onClick={this.resetTimer}/>
     }
 
     resetTimer() {
@@ -396,7 +425,10 @@ class ResetButton extends React.Component {
 
 class RecordButton extends React.Component {
     render(){
-        return <button onClick={this.recordTimer}> Record </button>
+        return <TimerButton
+        name="Record"
+        color="red"
+        onClick={this.recordTimer} />
     }
 
     recordTimer(){
