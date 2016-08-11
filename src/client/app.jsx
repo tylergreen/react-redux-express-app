@@ -243,11 +243,10 @@ class Timer extends React.Component {
     render() {
         return <div>
             <h1>Timer</h1>
-            <StartingTimeStamp></StartingTimeStamp>
-            <TimerDisplay timer_state={this.props.timer_state}>
-            </TimerDisplay>
-            <TimerControl timer_state={this.props.timer_state}>
-            </TimerControl>
+            <StartingTimeStamp/>
+            <TimerDisplay timer_state={this.props.timer_state}/>
+            <TimerControl timer_state={this.props.timer_state} />
+
           </div>
     }
 }

@@ -24,23 +24,24 @@ const login = (state, action) => {
             }
         })
     case 'STOP_TIMER':
-        var newTimerState = Object.assign({}, state.timer, {
+        return Object.assign({}, state, {
             timer: {
-                state: 'Stopped'
+                state: 'Stopped',
+                startTime: state.timer.startTime
             }
         })
-        return Object.assign({}, state, {newTimerState})
-        
     case 'RESET_TIMER':
         return Object.assign({}, state, {
             timer: {
-                state: 'Ready'
+                state: 'Ready',
+                startTime: null
             }
         })
     case 'RESUME_TIMER':
         return Object.assign({}, state, {
             timer: {
-                state: 'Running'
+                state: 'Running',
+                startTime: state.timer.startTime
             }
         })
     default:
