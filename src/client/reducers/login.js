@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 const login = (state, action) => {
     switch(action.type) {
     case 'LOGIN':
@@ -11,15 +13,14 @@ const login = (state, action) => {
             isLoggedIn: false
         })
     case 'UPDATE_USER':
-        console.log('updating user.  action.user is')
-        console.log(action.user)
         return Object.assign({}, state, {
             user: action.user
         })
     case 'START_TIMER':
         return Object.assign({}, state, {
             timer: {
-                state: 'Running'
+                state: 'Running',
+                startTime: moment()
             }
         })
     case 'STOP_TIMER':

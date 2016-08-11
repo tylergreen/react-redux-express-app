@@ -7,7 +7,7 @@ import thunk from 'redux-thunk'
 import fetch from 'fetch-ponyfill'
 import ReactInterval from 'react-interval'
 import reactCSS from 'reactcss'
-import moment from 'moment'
+
 
 import login from './reducers/login'
 import {
@@ -30,7 +30,8 @@ console.log(login)
 let store = createStore(login,
                         {isLoggedIn: false,
                          timer: {
-                             state: "Ready"
+                             state: "Ready",
+                             startTime: null
                          }
                         },
                         applyMiddleware(thunk));
@@ -242,6 +243,7 @@ class Timer extends React.Component {
     render() {
         return <div>
             <h1>Timer</h1>
+            <StartingTimeStamp></StartingTimeStamp>
             <TimerDisplay timer_state={this.props.timer_state}>
             </TimerDisplay>
             <TimerControl timer_state={this.props.timer_state}>
@@ -250,17 +252,29 @@ class Timer extends React.Component {
     }
 }
 
+class StartingTimeStamp extends React.Component {
+    timestamp() {
+        var startTime = store.getState().timer.startTime
+        if(startTime)
+            return startTime.format()
+        else
+            return ""
+    }
+    
+    render(){
+        return <div> Start Time: {this.timestamp() } </div>
+    }
+}
+
 class TimerDisplay extends React.Component {
     constructor(){
         super()
         this.state = {count: 0 }
-    
+        
         this.isRunning = this.isRunning.bind(this)
     }
 
     isRunning() {
-        console.log("props are")
-        console.log(this.props)
         return this.props.timer_state == 'Running'
     }
 
@@ -271,25 +285,24 @@ class TimerDisplay extends React.Component {
         return this.state.count
     }
 
-
-        format(count){
-            var seconds = count % 60
-            var minutes = Math.floor(count / 60) % 60
-            var hours = Math.floor(count / 360) % 60
+    // this can be moved somewhere else
+    format(count){
+        var seconds = count % 60
+        var minutes = Math.floor(count / 60) % 60
+        var hours = Math.floor(count / 360) % 60
         
-            hours = ("0" + hours).slice(-2)
-            minutes = ("0" + minutes).slice(-2)
-            seconds = ("0" + seconds).slice(-2)
+        hours = ("0" + hours).slice(-2)
+        minutes = ("0" + minutes).slice(-2)
+        seconds = ("0" + seconds).slice(-2)
         
-            return `${hours}:${minutes}:${seconds}`
-        }
+        return `${hours}:${minutes}:${seconds}`
+    }
 
     render() {
         const styles = reactCSS({
             'default': {
                 display: {
                     fontSize: '2em',
-                    
                 }}})
 
         return (
@@ -386,6 +399,8 @@ class TimerButton extends React.Component {
 
 class StartButton extends React.Component {
     startTimer(){
+        // can we add a timer id to this so we can possibly have multiple timers going?
+        // need to store the timestamp somewhere
         store.dispatch(startTimer())
     }
 
