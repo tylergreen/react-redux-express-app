@@ -24,11 +24,13 @@ const login = (state, action) => {
             }
         })
     case 'STOP_TIMER':
-        return Object.assign({}, state, {
+        var newTimerState = Object.assign({}, state.timer, {
             timer: {
                 state: 'Stopped'
             }
         })
+        return Object.assign({}, state, {newTimerState})
+        
     case 'RESET_TIMER':
         return Object.assign({}, state, {
             timer: {
