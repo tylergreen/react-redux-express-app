@@ -1,3 +1,11 @@
+// move this to a timerAction file
+export const updateLabel = (label) => {
+    return {
+        type: "UPDATE_LABEL",
+        label: label,
+    }
+}
+
 // change email to expire the JWT 
 export const logoutAction = (email) => {
     return {
@@ -166,16 +174,38 @@ export function startTimer(){
     }
 }
 
-export function stopTimer(){
+export function stopTimer(interval){
     return {
-        type: "STOP_TIMER"
+        type: "STOP_TIMER",
+        interval
     }
 }
 
-export function recordTimer(){
-    return {
-        type: "RECORD_TIMER"
+
+
+
+
+export function recordTimer(timer){
+    return (dispatch) => {
+        return fetch('/recordTimer', {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                label: timer.label,
+                startTime: timer.startTime,
+                stopTime: timer.stopTime,
+                duration_in_seconds: timer.count
+                
+            })
+        }).then(resp => {
+            console.log('got response')
+            console.log(resp)
+        })
     }
 }
+
 
 

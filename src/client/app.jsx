@@ -1,15 +1,18 @@
 import Paper from 'paper'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, combineReducers } from 'redux'
 import { Provider, connect } from 'react-redux'
 import thunk from 'redux-thunk'
+
+import { reduxForm, reducer as formReducer } from 'redux-form'
+
 import fetch from 'fetch-ponyfill'
-import ReactInterval from 'react-interval'
 import reactCSS from 'reactcss'
 
-
 import login from './reducers/login'
+import timerReducer from './reducers/timerReducer'
+
 import {
     loginAction, logoutAction, getMessage,
     saveProfileAction, registerAction,
@@ -17,7 +20,8 @@ import {
     stopTimer,
     resumeTimer,
     resetTimer,
-    recordTimer
+    recordTimer,
+    updateLabel 
 } from './actions/index'
 
 import { Router, Route, Link, browserHistory } from 'react-router'
@@ -27,14 +31,39 @@ let _ = require('lodash')
 
 console.log(login)
 
-let store = createStore(login,
-                        {isLoggedIn: false,
-                         timer: {
-                             state: "Ready",
-                             startTime: null
-                         }
-                        },
-                        applyMiddleware(thunk));
+const reducers =  {
+    login: login,
+    timer: timerReducer,
+    form: formReducer //redux-form
+}
+
+const reducer = combineReducers(reducers)
+
+
+// might want to put this in a middleware file somewhere
+const timerMiddleware = store => next => action => {
+    if (action.type === 'START_TIMER') {
+        action.interval = setInterval(() =>
+                                      store.dispatch({type: 'TICK',
+                                                      currentTime: Date.now() }),
+                                      1000);
+          
+    } else if (action.type === 'STOP_TIMER') {
+        clearInterval(action.interval);
+    }
+    else if (action.type === 'RESUME_TIMER') {
+        // obviously this is wrong.  Will need to keep track of a total elapsed counter or reset start time
+                action.interval = setInterval(() =>
+                                              store.dispatch({type: 'TICK',
+                                                              currentTime: Date.now() }),
+                                              1000);
+    }
+    next(action);
+};
+
+let store = createStore(reducer,
+                        applyMiddleware(timerMiddleware,
+                                        thunk));
 
 class LoginForm extends React.Component {
     render() {
@@ -57,14 +86,19 @@ class UserProfileForm extends React.Component {
     }
 
     render() {
+        let firstName
+        let lastName
+        let userName
+        let email
+                
         return <div>
             <div>
-            User Name: { this.props.user.username }
+            User Name: { this.props.user.userName }
         </div>
             <div>
             First Name: { this.props.user.firstName }
             <input type="text"
-        ref={(c) => this.firstName = c}
+        ref={(c) => firstName = c}
             ></input>
 
         </div>
@@ -72,7 +106,7 @@ class UserProfileForm extends React.Component {
             Last Name: { this.props.user.lastName }
 
             <input type="text"
-        ref={(c) => this.lastName = c}
+        ref={(c) => lastName = c}
             ></input>
 
         </div>
@@ -80,23 +114,24 @@ class UserProfileForm extends React.Component {
             Email: { this.props.user.email }
 
             <input type="email"
-        ref={(c) => this.email= c}
+        ref={(c) => email= c}
             ></input>
 
         </div>
 
-            <button onClick={this.submit}>Save Changes</button>
+            <button onClick={this.submit(firstName, lastName, userName, email)}>Save Changes</button>
             
             <LogoutButton> </LogoutButton>
             </div>
     }
-
-    submit() {
-        store.dispatch(saveProfileAction({
-            firstName: ReactDOM.findDOMNode(this.firstName).value,
-            lastName: ReactDOM.findDOMNode(this.lastName).value,
-            email: ReactDOM.findDOMNode(this.email).value},
-                                         store.getState().jwt))         
+    // could refactor this to take 1 arg instead of 4
+    submit(firstName, lastName, userName, email) {
+        store.dispatch(saveProfileAction(
+            { firstName: firstName,
+              lastName: lastName,
+              email: email,
+              userName: userName},
+            store.getState().jwt)) 
     }
 }
 
@@ -227,8 +262,7 @@ class Home extends React.Component {
                <Link to="/register">Sign Up</Link>
                <Link to="/timer">Timer</Link>
                
-                <ActiveTimer></ActiveTimer>
-               <TimerEx2></TimerEx2>
+               <ActiveTimer handleSubmit={recordTimer}></ActiveTimer>
                
                <ColorTarget name='target1' x={55} y={55} size={50} />
 
@@ -240,55 +274,12 @@ class Home extends React.Component {
 }
 
 class Timer extends React.Component {
-    render() {
-        return <div>
-            <h1>Timer</h1>
-            <StartingTimeStamp/>
-            <TimerDisplay timer_state={this.props.timer_state}/>
-            <TimerControl timer_state={this.props.timer_state} />
-
-          </div>
-    }
-}
-
-class StartingTimeStamp extends React.Component {
-    timestamp() {
-        var startTime = store.getState().timer.startTime
-        if(startTime)
-            return startTime.format()
-        else
-            return ""
-    }
-    
-    render(){
-        return <div> Start Time: {this.timestamp() } </div>
-    }
-}
-
-class TimerDisplay extends React.Component {
-    constructor(){
-        super()
-        this.state = {count: 0 }
-        
-        this.isRunning = this.isRunning.bind(this)
-    }
-
-    isRunning() {
-        return this.props.timer_state == 'Running'
-    }
-
-    count(){
-        if(this.props.timer_state == "Ready")
-            this.state.count = 0
-        
-        return this.state.count
-    }
-
-    // this can be moved somewhere else
-    format(count){
+    format(milliseconds){
+        console.log(milliseconds)
+        var count = Math.round(milliseconds / 1000.0)
         var seconds = count % 60
         var minutes = Math.floor(count / 60) % 60
-        var hours = Math.floor(count / 360) % 60
+        var hours = Math.floor(count / 3600) % 60
         
         hours = ("0" + hours).slice(-2)
         minutes = ("0" + minutes).slice(-2)
@@ -297,6 +288,32 @@ class TimerDisplay extends React.Component {
         return `${hours}:${minutes}:${seconds}`
     }
 
+    
+    render() {
+        return <div>
+            <h1>Timer</h1>
+            <TimerLabel/>
+            <div> Start Time: {this.props.startTime } </div>
+            <TimerDisplay elapsed={this.format(this.props.elapsed)}/>
+            <TimerControl timer_state={this.props.timer_state} label ={ this.props.label }/>
+
+          </div>
+    }
+}
+
+class TimerLabel extends React.Component {
+    handleChange(event){
+        store.dispatch(updateLabel(event.target.value))
+    }
+    
+    render(){
+        return <div>
+            Timer Label: <input type="text" onChange={this.handleChange}></input>
+            </div>
+    }
+}
+
+class TimerDisplay extends React.Component {
     render() {
         const styles = reactCSS({
             'default': {
@@ -304,19 +321,13 @@ class TimerDisplay extends React.Component {
                     fontSize: '2em',
                 }}})
 
-        return (
-                <div style={styles.display}>
-                {this.format(this.count())}
-                <ReactInterval timeout={1000} enabled={this.isRunning()}
-
-            callback={ () => {
-                this.state.count += 1
-                this.setState(this.state)
-            }
-                     } />
-                </div>)
+        return <div style={styles.display}>
+            {this.props.elapsed}
+        </div>
     }
 }
+
+
 
 class TimerControl extends React.Component {
     render(){
@@ -362,11 +373,10 @@ class TimerControl extends React.Component {
 }
 
 const mapTimerStateToProps = (state) => {
-    console.log("state is ")
+    console.log("map stat to props is")
     console.log(state)
-    return {
-        timer_state: state.timer.state
-    }
+    //    return state.timer
+    return state.timer
 }
 
 // pattern is do do this for a whole list of componenets
@@ -392,9 +402,11 @@ class TimerButton extends React.Component {
                 }
             }})
         
-        return <button style={styles.button} onClick={this.props.onClick}> {this.props.name} </button>
+        return <button style={styles.button} onClick={this.props.onClick} type={this.props.type}> {this.props.name} </button>
     }
 }
+
+TimerButton.defaultProps = {type: 'button'}
 
 class StartButton extends React.Component {
     startTimer(){
@@ -414,7 +426,7 @@ class StopButton extends React.Component {
     }
 
     stopTimer(){
-        store.dispatch(stopTimer())
+        store.dispatch(stopTimer(store.getState().timer.interval))
     }
 }
 
@@ -462,14 +474,19 @@ class ResetButton extends React.Component {
 
 class RecordButton extends React.Component {
     render(){
+        // subtle dependency hack here between type=submit and the parent form for use with redux-form so we can get at input field values
         return <TimerButton
+        type="submit"
         name="Record"
         color="red"
-        onClick={this.recordTimer} />
+        onClick={this.recordTimer}
+            />
     }
 
     recordTimer(){
         console.log("recording")
+        console.log(store.getState().timer)
+        store.dispatch(recordTimer(store.getState.timer)) // is it necessary to supply this arg ?  is timer available from within the store?
     }
 }
 
@@ -519,58 +536,6 @@ const mapStateToProps = (state) => {
     return {
         loggedIn: state.isLoggedIn,
         user: state.user
-    }
-}
-
-// react-interval example
-class TimerEx2 extends React.Component{
-    constructor(){
-        super()
-        this.state = {count: 0,
-                      running: false}
-
-        //this is less than preferable
-        this.startTimer = this.startTimer.bind(this)
-        this.stopTimer = this.stopTimer.bind(this)
-    }
-
-    startTimer(){
-        this.setState({running: true})
-    }
-
-    stopTimer(){
-        this.setState({running: false})
-    }
-
-    format(count){
-        var seconds = count % 60
-        var minutes = (count / 60) % 60
-        var hours = Math.floor((count / 360) % 60)
-        
-        hours = ("0" + hours).slice(-2)
-        minutes = ("0" + minutes).slice(-2)
-        seconds = ("0" + seconds).slice(-2)
-        
-        return `${hours}:${minutes}:${seconds}`
-    }
-    
-    render(){
-        const {count} = this.state
-
-        return (
-                <div>
-                <button onClick={this.startTimer}>Start</button>
-                <button onClick={this.stopTimer}> Stop </button>
-                {this.format(count)}
-                <ReactInterval timeout={1000} enabled={this.state.running}
-
-            callback={ () => {
-                this.state.count += 1
-                this.setState(this.state)
-            }
-                     } />
-                </div>
-        )
     }
 }
 

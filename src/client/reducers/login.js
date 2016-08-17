@@ -1,6 +1,6 @@
-import moment from 'moment'
+let initialState = { isLoggedIn: false,                   }
 
-const login = (state, action) => {
+const login = (state=initialState, action) => {
     switch(action.type) {
     case 'LOGIN':
         return Object.assign({}, state, {
@@ -15,34 +15,6 @@ const login = (state, action) => {
     case 'UPDATE_USER':
         return Object.assign({}, state, {
             user: action.user
-        })
-    case 'START_TIMER':
-        return Object.assign({}, state, {
-            timer: {
-                state: 'Running',
-                startTime: moment()
-            }
-        })
-    case 'STOP_TIMER':
-        return Object.assign({}, state, {
-            timer: {
-                state: 'Stopped',
-                startTime: state.timer.startTime
-            }
-        })
-    case 'RESET_TIMER':
-        return Object.assign({}, state, {
-            timer: {
-                state: 'Ready',
-                startTime: null
-            }
-        })
-    case 'RESUME_TIMER':
-        return Object.assign({}, state, {
-            timer: {
-                state: 'Running',
-                startTime: state.timer.startTime
-            }
         })
     default:
         return state
