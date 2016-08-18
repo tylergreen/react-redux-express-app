@@ -288,12 +288,18 @@ class Timer extends React.Component {
         return `${hours}:${minutes}:${seconds}`
     }
 
+    startTime(){
+        if(this.props.originalStartTime)
+            return new Date(this.props.originalStartTime).toDateString()
+        else
+            return ""
+    }
     
     render() {
         return <div>
             <h1>Timer</h1>
             <TimerLabel/>
-            <div> Start Time: {this.props.startTime } </div>
+            <div> Start Time: {this.startTime() } </div>
             <TimerDisplay elapsed={this.format(this.props.elapsed)}/>
             <TimerControl timer_state={this.props.timer_state} label ={ this.props.label }/>
 
