@@ -10,8 +10,6 @@ let initialState = {
 }
 
 const timerReducer = (state=initialState, action) => {
-    console.log("state is inisde time reducer")
-    console.log(state)
     switch(action.type){
     case 'UPDATE_LABEL':
         return Object.assign({}, state, {
@@ -20,10 +18,8 @@ const timerReducer = (state=initialState, action) => {
     case 'START_TIMER':
         return Object.assign({}, state, {
             timer_state: 'Running',
-            originalStartTime: Date.now(),
-            beginCountTime: Date.now(),
-            elapsed: 0,
-            total_elapsed: 0,
+            originalTimeStamp: Date.now(),
+            startTime: Date.now(),
             interval: action.interval
         })
     case 'STOP_TIMER':
@@ -36,7 +32,7 @@ const timerReducer = (state=initialState, action) => {
         return Object.assign({}, state, {
             timer_state: 'Ready',
             startTime: null,
-            originalStartTime: null,
+            originalTimeStamp: null,
             elapsed: 0,
         })
     case 'RESUME_TIMER':
@@ -51,7 +47,7 @@ const timerReducer = (state=initialState, action) => {
         })
     case 'TICK':
         return Object.assign({}, state, {
-            elapsed: action.currentTime - state.startTime + state.total_elapsed,
+            elapsed: (action.currentTime - state.startTime) + state.total_elapsed,
         })
     default:
         return state

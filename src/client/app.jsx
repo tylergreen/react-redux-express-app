@@ -52,11 +52,10 @@ const timerMiddleware = store => next => action => {
         clearInterval(action.interval);
     }
     else if (action.type === 'RESUME_TIMER') {
-        // obviously this is wrong.  Will need to keep track of a total elapsed counter or reset start time
-                action.interval = setInterval(() =>
-                                              store.dispatch({type: 'TICK',
-                                                              currentTime: Date.now() }),
-                                              1000);
+        action.interval = setInterval(() =>
+                                      store.dispatch({type: 'TICK',
+                                                      currentTime: Date.now() }),
+                                      1000);
     }
     next(action);
 };
@@ -276,10 +275,11 @@ class Home extends React.Component {
 class Timer extends React.Component {
     format(milliseconds){
         console.log(milliseconds)
-        var count = Math.round(milliseconds / 1000.0)
-        var seconds = count % 60
-        var minutes = Math.floor(count / 60) % 60
-        var hours = Math.floor(count / 3600) % 60
+        //        var count = Math.round(milliseconds / 1000.0)
+        var count = milliseconds
+        var seconds = Math.floor(count / 1000.0) % 60
+        var minutes = Math.floor(count / 60000.0) % 60
+        var hours = Math.floor(count / 360000.0) % 60
         
         hours = ("0" + hours).slice(-2)
         minutes = ("0" + minutes).slice(-2)
