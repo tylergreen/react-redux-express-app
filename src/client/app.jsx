@@ -21,7 +21,8 @@ import {
     resumeTimer,
     resetTimer,
     recordTimer,
-    updateLabel 
+    updateLabel ,
+    lapTimerAction
 } from './actions/index'
 
 import { Router, Route, Link, browserHistory } from 'react-router'
@@ -272,25 +273,26 @@ class Home extends React.Component {
     }
 }
 
-class Timer extends React.Component {
-    format(milliseconds){
-        console.log(milliseconds)
-        //        var count = Math.round(milliseconds / 1000.0)
-        var count = milliseconds
-        var seconds = Math.floor(count / 1000.0) % 60
-        var minutes = Math.floor(count / 60000.0) % 60
-        var hours = Math.floor(count / 360000.0) % 60
-        
-        hours = ("0" + hours).slice(-2)
-        minutes = ("0" + minutes).slice(-2)
-        seconds = ("0" + seconds).slice(-2)
-        
-        return `${hours}:${minutes}:${seconds}`
-    }
 
-    startTime(){
-        if(this.props.originalStartTime)
-            return new Date(this.props.originalStartTime).toDateString()
+function format_ms(milliseconds){
+    var count = milliseconds
+    var seconds = Math.floor(count / 1000.0) % 60
+    var minutes = Math.floor(count / 60000.0) % 60
+    var hours = Math.floor(count / 360000.0) % 60
+    
+    hours = ("0" + hours).slice(-2)
+    minutes = ("0" + minutes).slice(-2)
+    seconds = ("0" + seconds).slice(-2)
+    
+    return `${hours}:${minutes}:${seconds}`
+}
+
+
+class Timer extends React.Component {
+
+    startTimeStamp(){
+        if(this.props.originalTimeStamp)
+            return new Date(this.props.originalTimeStamp).toDateString()
         else
             return ""
     }
@@ -299,11 +301,28 @@ class Timer extends React.Component {
         return <div>
             <h1>Timer</h1>
             <TimerLabel/>
-            <div> Start Time: {this.startTime() } </div>
-            <TimerDisplay elapsed={this.format(this.props.elapsed)}/>
+            <div> Start Time: {this.startTimeStamp() } </div>
+            <TimerDisplay elapsed={format_ms(this.props.elapsed)}/>
             <TimerControl timer_state={this.props.timer_state} label ={ this.props.label }/>
-
+            <LapDisplay lapTimes={this.props.lapTimes}/>
           </div>
+    }
+}
+
+class LapDisplay extends React.Component {
+    render(){
+        if(this.props.lapTimes.length > 0){
+            return <div>
+                Lap Times 
+            <ol>
+            {this.props.lapTimes.map((lap) => {
+                return <li key={lap}> {format_ms(lap)} </li>
+            })}
+            </ol>
+                </div>
+        }
+        else
+            return <div></div>
     }
 }
 
@@ -345,14 +364,14 @@ class TimerControl extends React.Component {
             return <StartButton></StartButton>
         } else if (this.isRunning()){
             return <div>
-                <StopButton></StopButton>
-                <LapButton></LapButton>
+                <StopButton/>
+                <LapButton/>
                 </div>
         } else if (this.isStopped()) {
             return <div>
-                <ResumeButton></ResumeButton>
-                <RecordButton></RecordButton>
-                <ResetButton></ResetButton>
+                <ResumeButton/>
+                <RecordButton/>
+                <ResetButton/>
                 </div>
         }
         
@@ -416,8 +435,6 @@ TimerButton.defaultProps = {type: 'button'}
 
 class StartButton extends React.Component {
     startTimer(){
-        // can we add a timer id to this so we can possibly have multiple timers going?
-        // need to store the timestamp somewhere
         store.dispatch(startTimer())
     }
 
@@ -437,15 +454,15 @@ class StopButton extends React.Component {
 }
 
 class LapButton extends React.Component {
+    lapTimer() {
+        store.dispatch(lapTimerAction(Date.now()))
+    }
+    
     render(){
         return <TimerButton
         color="yellow"
-        onClick={this.lapTimer}
+        onClick={ this.lapTimer}
         name="Lap" /> 
-    }
-
-    lapTimer(){
-        console.log("Lap Timer")
     }
 }
 

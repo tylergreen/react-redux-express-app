@@ -181,9 +181,12 @@ export function stopTimer(interval){
     }
 }
 
-
-
-
+export function lapTimerAction(timestamp){
+    return {
+        type: 'LAP_TIMER',
+        lapTime: timestamp
+    }
+}
 
 export function recordTimer(timer){
     return (dispatch) => {
