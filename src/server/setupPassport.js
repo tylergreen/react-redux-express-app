@@ -4,7 +4,7 @@ import {Strategy as LocalStrategy} from 'passport-local'
 import {Strategy as JwtStrategy } from 'passport-jwt'
 import { ExtractJwt } from 'passport-jwt'
 import bcrypt from 'bcrypt'
-import Model from './model/models.js'
+import model from './model/models.js'
     
 module.exports = (app) => {
     app.use(passport.initialize())
@@ -18,7 +18,7 @@ module.exports = (app) => {
         (jwt_payload, done) => {
             console.log('jwt payload is')
             console.log(jwt_payload)
-            Model.User.findOne({
+            model.user.findOne({
                 where: {'id': jwt_payload.user_id}
             }).then(user => {
                 if (user) {
@@ -35,7 +35,7 @@ module.exports = (app) => {
             session: false
         },
     function(email, password, done) {
-      Model.User.findOne({
+      model.user.findOne({
         where: {
           'email': email  // make this an index
         }
@@ -60,7 +60,7 @@ module.exports = (app) => {
   })
 
   passport.deserializeUser(function(id, done) {
-    Model.User.findOne({
+    model.user.findOne({
       where: {
         'id': id
       }

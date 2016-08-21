@@ -1,5 +1,5 @@
 var bcrypt = require('bcrypt'),
-    Model = require('../model/models.js'),
+    model = require('../model/models.js'),
     config = require('config'),
     jwt = require('jsonwebtoken')
 
@@ -20,7 +20,7 @@ module.exports.signup = function(req, res) {
         password: hashedPassword
     }
 
-    Model.User.create(newUser).then((user) => {
+    model.user.create(newUser).then((user) => {
         var server_profile = {
             user_id: user.id,
         }
@@ -41,7 +41,7 @@ module.exports.signup = function(req, res) {
     }
                                    ).catch(function(error) {
                                        console.log(error)
-                                       res.json({'error': error} // should just respone with 500
+                                       res.json({'error': error} // should just respond with 500
                                                )
                                    })
                                        }
