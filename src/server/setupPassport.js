@@ -4,7 +4,7 @@ var passport = require('passport'),
     JwtStrategy = require('passport-jwt').Strategy,
     ExtractJwt = require('passport-jwt').ExtractJwt,
     bcrypt = require('bcrypt'),
-    Model = require('./model/models.js'),
+    Model = require('./model/models.js')
     
 
 module.exports = (app) => {
