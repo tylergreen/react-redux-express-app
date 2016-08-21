@@ -1,15 +1,14 @@
 var passport = require('passport'),
     config = require('config'),
     LocalStrategy = require('passport-local').Strategy,
+    JwtStrategy = require('passport-jwt').Strategy,
+    ExtractJwt = require('passport-jwt').ExtractJwt;
     bcrypt = require('bcrypt'),
-    Model = require('./model/models.js')
+    Model = require('./model/models.js'),
+    
 
 module.exports = (app) => {
     app.use(passport.initialize())
-
-    var JwtStrategy = require('passport-jwt').Strategy,
-        ExtractJwt = require('passport-jwt').ExtractJwt;
-    
     var opts = {
         jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
         secretOrKey: config.get("jwt-secret-key")
