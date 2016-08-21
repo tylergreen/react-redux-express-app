@@ -1,12 +1,11 @@
-var passport = require('passport'),
-    config = require('config'),
-    LocalStrategy = require('passport-local').Strategy,
-    JwtStrategy = require('passport-jwt').Strategy,
-    ExtractJwt = require('passport-jwt').ExtractJwt,
-    bcrypt = require('bcrypt'),
-    Model = require('./model/models.js')
+import passport from 'passport'
+import config from 'config'
+import {Strategy as LocalStrategy} from 'passport-local'
+import {Strategy as JwtStrategy } from 'passport-jwt'
+import { ExtractJwt } from 'passport-jwt'
+import bcrypt from 'bcrypt'
+import Model from './model/models.js'
     
-
 module.exports = (app) => {
     app.use(passport.initialize())
     var opts = {
