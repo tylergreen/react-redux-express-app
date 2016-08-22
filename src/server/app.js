@@ -14,7 +14,8 @@ var express = require('express'),
     jsonParser = bodyParser.json(),
     expressJwt = require('express-jwt')
 
-var port = config.get('port');
+var heroku_port = process.env.PORT,
+    port =  heroku_port || config.get('port')  //FIXME use idioimatic config.js instead.  
 
 app.use('/', express.static(path.join(__dirname, '/public')))
 app.use('/styles', express.static(path.join(__dirname, '/styles')))
