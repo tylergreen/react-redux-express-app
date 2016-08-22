@@ -1,12 +1,13 @@
-import passport from 'passport'
-import config from 'config'
-import {Strategy as LocalStrategy} from 'passport-local'
-import {Strategy as JwtStrategy } from 'passport-jwt'
-import { ExtractJwt } from 'passport-jwt'
-import bcrypt from 'bcrypt'
-import model from './model/models.js'
-    
-export default function(){
+var passport = require('passport')
+var config = require('config')
+var LocalStrategy = require('passport-local').Strategy
+var JwtStrategy = require('passport-jwt').Strategy
+var ExtractJwt  = require('passport-jwt').ExtractJwt
+var bcrypt = require('bcrypt')
+var model = require('./model/models.js')
+
+module.exports = (app) => {
+
     app.use(passport.initialize())
     var opts = {
         jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
