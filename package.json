@@ -5,7 +5,7 @@
   "main": "src/server/app.js",
   "author": "Tyler Green",
   "scripts": {
-    "start": "babel-node --presets es2015 src/server/app.js"
+    "start": "node src/server/app.js"
   },
   "engines": {
     "node": "5.7.0"
