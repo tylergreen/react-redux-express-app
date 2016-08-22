@@ -6,7 +6,7 @@ import { ExtractJwt } from 'passport-jwt'
 import bcrypt from 'bcrypt'
 import model from './model/models.js'
     
-module.exports = (app) => {
+export default function(){
     app.use(passport.initialize())
     var opts = {
         jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
