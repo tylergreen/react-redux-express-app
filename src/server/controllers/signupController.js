@@ -4,9 +4,11 @@ var bcrypt = require('bcrypt'),
     jwt = require('jsonwebtoken')
 
 module.exports.signup = function(req, res) {
-  var email = req.body.email
-  var password = req.body.password
-  
+    console.log("Req is")
+    console.log(reg)
+    var email = req.body.email
+    var password = req.body.password
+   
   if (!email || !password) {
       res.json({'error': 'supply email and password'})
   }
