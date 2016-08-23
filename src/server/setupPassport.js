@@ -19,7 +19,7 @@ module.exports = (app) => {
         (jwt_payload, done) => {
             console.log('jwt payload is')
             console.log(jwt_payload)
-            model.user.findOne({
+            model.User.findOne({
                 where: {'id': jwt_payload.user_id}
             }).then(user => {
                 if (user) {
@@ -36,7 +36,7 @@ module.exports = (app) => {
             session: false
         },
     function(email, password, done) {
-      model.user.findOne({
+      model.User.findOne({
         where: {
           'email': email  // make this an index
         }
@@ -61,7 +61,7 @@ module.exports = (app) => {
   })
 
   passport.deserializeUser(function(id, done) {
-    model.user.findOne({
+    model.User.findOne({
       where: {
         'id': id
       }
