@@ -17,7 +17,7 @@ if(process.env.DATABASE_URL){
 
 module.exports = sequelize
 
-var User = Sequelize.define('Users', UserMeta.attributes, UserMeta.options)
+var User = sequelize.define('Users', UserMeta.attributes, UserMeta.options)
 
 // you can define relationships here
 
