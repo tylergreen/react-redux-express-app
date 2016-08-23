@@ -26,8 +26,8 @@ app.use(bodyParser.urlencoded({
 
 setupPassport(app)  // is there a better way to do this?
 
-db.sync().then(() => app.listen(app.locals.port))
+db.sync().then(() => app.listen(app.get('port')))
 
-console.log(`Server started on port ${app.locals.port}`)
+console.log(`Server started on port ${app.get('port')}`)
 
 module.exports.getApp = app
