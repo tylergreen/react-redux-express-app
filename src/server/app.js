@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({
 
 setupPassport(app)  // is there a better way to do this?
 
-db.sequelize.sync().then(() => app.listen(port))
+db.sync().then(() => app.listen(port))
 
 console.log(`Server started on port ${port}`)
 
