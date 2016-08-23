@@ -2,6 +2,6 @@
     "port": 8080,
     "jwt-secret-key": "secret",
     "jwt-expiration": {
-        "expiresInMinutes": 30
+        "expiresIn": '30m'
     }
 }
