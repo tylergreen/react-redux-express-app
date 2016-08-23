@@ -1,7 +1,6 @@
 var express = require('express'),
     path = require('path'),
     config = require('config'),
-    setupHandlebars  = require('./setupHandlebars.js')(app),
     setupPassport = require('./setupPassport'),
     flash = require('connect-flash'),
     appRouter = require('./routers/appRouter.js')(express),
