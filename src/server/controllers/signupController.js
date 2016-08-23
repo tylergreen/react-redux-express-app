@@ -20,7 +20,7 @@ module.exports.signup = function(req, res) {
         password: hashedPassword
     }
 
-    model.user.create(newUser).then((user) => {
+    model.User.create(newUser).then((user) => {
         var server_profile = {
             user_id: user.id,
         }
