@@ -12,19 +12,21 @@ var express = require('express'),
     db = require('./model/models')
 
 var app = express()
-app.set('views', __dirname + '/views')
-app.set('port', process.env.PORT || 8080)
+
 app.use(jsonParser)
 app.use(bodyParser.urlencoded({
   extended: true
 }))
 
+setupPassport(app)  // is there a better way to do this?
+
 app.use('/', express.static(path.join(__dirname, '/public')))
 app.use('/styles', express.static(path.join(__dirname, '/styles')))
 app.use('/', appRouter)
+app.set('views', __dirname + '/views')
+app.set('port', process.env.PORT || 8080)
 
 
-setupPassport(app)  // is there a better way to do this?
 
 db.sync().then(() => app.listen(app.get('port')))
 
