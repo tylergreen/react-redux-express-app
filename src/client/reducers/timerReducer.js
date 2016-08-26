@@ -31,7 +31,9 @@ const timerReducer = (state=initialState, action) => {
             total_elapsed: state.elapsed
         })
     case 'RESET_TIMER':
-        return Object.assign({}, state, initialState)
+        var newState = Object.assign({}, initialState, {label:
+                                                        state.label})
+        return Object.assign({}, state, newState)
     case 'RESUME_TIMER':
         return Object.assign({}, state, {
             timer_state: 'Running',

@@ -14,13 +14,16 @@ var attributes = {
     }
   },
   firstName: {
-    type: Sequelize.STRING,
+      type: Sequelize.STRING,
+      max: 128
   },
   lastName: {
-    type: Sequelize.STRING,
+      type: Sequelize.STRING,
+      max: 128
   },
   password: {
-    type: Sequelize.STRING,
+      type: Sequelize.STRING,
+      max: 24
   },
   salt: {
     type: Sequelize.STRING

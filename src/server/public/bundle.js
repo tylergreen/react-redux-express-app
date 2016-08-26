@@ -566,7 +566,8 @@
 	                ),
 	                _react2.default.createElement(TimerDisplay, { elapsed: format_ms(this.props.elapsed) }),
 	                _react2.default.createElement(TimerControl, { timer_state: this.props.timer_state, label: this.props.label }),
-	                _react2.default.createElement(LapDisplay, { lapTimes: this.props.lapTimes })
+	                _react2.default.createElement(LapDisplay, { lapTimes: this.props.lapTimes }),
+	                _react2.default.createElement(RecordsDisplay, null)
 	            );
 	        }
 	    }]);
@@ -941,31 +942,62 @@
 	    }, {
 	        key: 'recordTimer',
 	        value: function recordTimer() {
-	            console.log("recording");
-	            console.log(store.getState().timer);
-	            store.dispatch((0, _index.recordTimer)(store.getState.timer)); // is it necessary to supply this arg ?  is timer available from within the store?
+	            var state = store.getState();
+	            store.dispatch((0, _index.recordTimer)(state.timer, state.login.jwt)); // is it necessary to supply this arg ?  is timer available from within the store?
 	        }
 	    }]);
 
 	    return RecordButton;
 	}(_react2.default.Component);
 
-	var Registration = function (_React$Component21) {
-	    _inherits(Registration, _React$Component21);
+	var RecordsDisplay = function (_React$Component21) {
+	    _inherits(RecordsDisplay, _React$Component21);
+
+	    function RecordsDisplay() {
+	        _classCallCheck(this, RecordsDisplay);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(RecordsDisplay).apply(this, arguments));
+	    }
+
+	    _createClass(RecordsDisplay, [{
+	        key: 'getTimings',
+	        value: function getTimings() {
+	            var state = store.getState();
+	            store.dispatch((0, _index.getTimings)(state.timer, state.login.jwt));
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'button',
+	                {
+	                    onClick: this.getTimings },
+	                ' GET TIMINGS '
+	            );
+	        }
+	    }]);
+
+	    return RecordsDisplay;
+	}(_react2.default.Component);
+
+	/// end TIMER 
+
+	var Registration = function (_React$Component22) {
+	    _inherits(Registration, _React$Component22);
 
 	    function Registration() {
 	        _classCallCheck(this, Registration);
 
-	        var _this22 = _possibleConstructorReturn(this, Object.getPrototypeOf(Registration).call(this));
+	        var _this23 = _possibleConstructorReturn(this, Object.getPrototypeOf(Registration).call(this));
 
-	        _this22.register = _this22.register.bind(_this22); // react es6 doesn't auto bind methods to itself
-	        return _this22;
+	        _this23.register = _this23.register.bind(_this23); // react es6 doesn't auto bind methods to itself
+	        return _this23;
 	    }
 
 	    _createClass(Registration, [{
 	        key: 'render',
 	        value: function render() {
-	            var _this23 = this;
+	            var _this24 = this;
 
 	            return _react2.default.createElement(
 	                'div',
@@ -982,7 +1014,7 @@
 	                        type: 'email',
 	                        name: 'email',
 	                        ref: function ref(c) {
-	                            return _this23.email_input = c;
+	                            return _this24.email_input = c;
 	                        }
 	                    })
 	                ),
@@ -990,7 +1022,7 @@
 	                    type: 'password',
 	                    name: 'password',
 	                    ref: function ref(c) {
-	                        return _this23.password_input = c;
+	                        return _this24.password_input = c;
 	                    }
 	                }),
 	                _react2.default.createElement(
@@ -45610,7 +45642,8 @@
 	                total_elapsed: state.elapsed
 	            });
 	        case 'RESET_TIMER':
-	            return Object.assign({}, state, initialState);
+	            var newState = Object.assign({}, initialState, { label: state.label });
+	            return Object.assign({}, state, newState);
 	        case 'RESUME_TIMER':
 	            return Object.assign({}, state, {
 	                timer_state: 'Running',
@@ -76425,6 +76458,7 @@
 	exports.startTimer = startTimer;
 	exports.stopTimer = stopTimer;
 	exports.lapTimerAction = lapTimerAction;
+	exports.getTimings = getTimings;
 	exports.recordTimer = recordTimer;
 	// move this to a timerAction file
 	var updateLabel = exports.updateLabel = function updateLabel(label) {
@@ -76613,20 +76647,39 @@
 	    };
 	}
 
-	function recordTimer(timer) {
+	function getTimings(timer, jwt) {
+	    return function (dispatch) {
+	        return fetch('/timings', {
+	            method: 'post',
+	            headers: {
+	                'Accept': 'application/json',
+	                'Content-Type': 'application/json',
+	                "Authorization": 'Bearer ' + jwt
+	            },
+	            body: JSON.stringify({
+	                label: timer.label
+	            })
+	        }).then(function (resp) {
+	            console.log("Got Timings");
+	            console.log(resp);
+	            // render sweet bar chart graph
+	        });
+	    };
+	}
+
+	function recordTimer(timer, jwt) {
 	    return function (dispatch) {
 	        return fetch('/recordTimer', {
 	            method: 'post',
 	            headers: {
 	                'Accept': 'application/json',
-	                'Content-Type': 'application/json'
+	                'Content-Type': 'application/json',
+	                "Authorization": 'Bearer ' + jwt
 	            },
 	            body: JSON.stringify({
 	                label: timer.label,
 	                startTime: timer.startTime,
-	                stopTime: timer.stopTime,
-	                duration_in_seconds: timer.count
-
+	                duration: timer.total_elapsed
 	            })
 	        }).then(function (resp) {
 	            console.log('got response');

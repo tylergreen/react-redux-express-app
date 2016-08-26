@@ -1,6 +1,7 @@
 var passport = require('passport'),
     config = require('config'),
     signupController = require('../controllers/signupController.js'),
+    timerController = require('../controllers/timerController.js'),
     jwt = require('jsonwebtoken'),
     Model = require('../model/models.js')
 
@@ -8,6 +9,15 @@ module.exports = function(express) {
   var router = express.Router()
 
     router.post('/signup', signupController.signup)
+    router.post('/recordTimer',
+                passport.authenticate('jwt',
+                                      {session: false}),
+                timerController.record)
+
+    router.post('/timings',
+               passport.authenticate('jwt',
+                                     {session: false}),
+               timerController.timings)
 
     router.get('/protected',
                 passport.authenticate('jwt', {session: false}), // can we configure session to be false?
@@ -56,23 +66,23 @@ module.exports = function(express) {
                )
     
   router.post('/login',
-                passport.authenticate('local'),
-                function(req, res) {
+              passport.authenticate('local'),
+              function(req, res) {
                     // send JWT
-                    console.log("REQ USER OBJECT")
-                    console.log(req.user)
-                    var profile = {
-                        user_id: req.user.id,
-                    }
+                  console.log("REQ USER OBJECT")
+                  console.log(req.user)
+                  var profile = {
+                      user_id: req.user.id,
+                  }
 
                     // partially apply jwt.sign into util or helper
-                    var secret = config.get("jwt-secret-key")
-                    var jwtExpiration = config.get("jwt-expiration")
-                    var token = jwt.sign(profile,
-                                         secret,
-                                         jwtExpiration);
-                    res.json({user: req.user, token: token})
-                }
+                  var secret = config.get("jwt-secret-key")
+                  var jwtExpiration = config.get("jwt-expiration")
+                  var token = jwt.sign(profile,
+                                       secret,
+                                       jwtExpiration);
+                  res.json({user: req.user, token: token})
+              }
              )
 
     router.get('/echo',

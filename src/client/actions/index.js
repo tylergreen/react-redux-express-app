@@ -188,20 +188,41 @@ export function lapTimerAction(timestamp){
     }
 }
 
-export function recordTimer(timer){
+export function getTimings(timer, jwt){
+    return (dispatch) => {
+        return fetch('/timings', {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                "Authorization" :  'Bearer ' + jwt,
+            },
+            body: JSON.stringify({
+                label: timer.label,
+                // can add date range later and other filters/search options
+                
+            })
+        }).then(resp => {
+                console.log("Got Timings")
+                console.log(resp)
+                // render sweet bar chart graph
+            })
+    }
+}
+
+export function recordTimer(timer, jwt){
     return (dispatch) => {
         return fetch('/recordTimer', {
             method: 'post',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization" :  'Bearer ' + jwt,
             },
             body: JSON.stringify({
                 label: timer.label,
                 startTime: timer.startTime,
-                stopTime: timer.stopTime,
-                duration_in_seconds: timer.count
-                
+                duration: timer.total_elapsed
             })
         }).then(resp => {
             console.log('got response')

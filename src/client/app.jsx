@@ -22,7 +22,8 @@ import {
     resetTimer,
     recordTimer,
     updateLabel ,
-    lapTimerAction
+    lapTimerAction,
+    getTimings
 } from './actions/index'
 
 import { Router, Route, Link, browserHistory } from 'react-router'
@@ -305,6 +306,8 @@ class Timer extends React.Component {
             <TimerDisplay elapsed={format_ms(this.props.elapsed)}/>
             <TimerControl timer_state={this.props.timer_state} label ={ this.props.label }/>
             <LapDisplay lapTimes={this.props.lapTimes}/>
+
+        <RecordsDisplay/>
           </div>
     }
 }
@@ -333,7 +336,7 @@ class TimerLabel extends React.Component {
     
     render(){
         return <div>
-            Timer Label: <input type="text" onChange={this.handleChange}></input>
+            Timer Label: <input type="text" onChange={this.handleChange} ></input>
             </div>
     }
 }
@@ -507,11 +510,27 @@ class RecordButton extends React.Component {
     }
 
     recordTimer(){
-        console.log("recording")
-        console.log(store.getState().timer)
-        store.dispatch(recordTimer(store.getState.timer)) // is it necessary to supply this arg ?  is timer available from within the store?
+        var state = store.getState()
+        store.dispatch(recordTimer(state.timer, state.login.jwt)) // is it necessary to supply this arg ?  is timer available from within the store?
     }
 }
+
+class RecordsDisplay extends React.Component {
+
+    getTimings(){
+        var state = store.getState()
+        store.dispatch(getTimings(state.timer, state.login.jwt))
+    }
+    render(){
+        return <button
+        onClick={this.getTimings}> GET TIMINGS </button>
+    }
+
+
+
+}
+
+/// end TIMER 
 
 class Registration extends React.Component {
     constructor() {
