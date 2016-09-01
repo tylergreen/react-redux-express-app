@@ -19,6 +19,8 @@ import LoginForm from './components/loginForm.jsx'
 import login from './reducers/login'
 import timerReducer from './reducers/timerReducer'
 
+import timerMiddleware from './middleware/timerMiddleware'
+
 import {
     loginAction, logoutAction, getMessage,
     saveProfileAction, 
@@ -46,25 +48,6 @@ const reducers =  {
 const reducer = combineReducers(reducers)
 
 
-// might want to put this in a middleware file somewhere
-const timerMiddleware = store => next => action => {
-    if (action.type === 'START_TIMER') {
-        action.interval = setInterval(() =>
-                                      store.dispatch({type: 'TICK',
-                                                      currentTime: Date.now() }),
-                                      1000);
-          
-    } else if (action.type === 'STOP_TIMER') {
-        clearInterval(action.interval);
-    }
-    else if (action.type === 'RESUME_TIMER') {
-        action.interval = setInterval(() =>
-                                      store.dispatch({type: 'TICK',
-                                                      currentTime: Date.now() }),
-                                      1000);
-    }
-    next(action);
-};
 
 let store = createStore(reducer,
                         applyMiddleware(timerMiddleware,
@@ -241,6 +224,9 @@ class Home extends React.Component {
                     justifyContent: 'space-between',
                     alignItems: 'flex-start'
                 },
+                authentication: {
+                    display: 'flex',
+                },
                 links: {
                     display: 'flex',
                     flexFlow: 'column'
@@ -254,16 +240,19 @@ class Home extends React.Component {
                    <Link to="/login">Sign In</Link>
                  </div>
 
-               <Registration store={store}/>
+               <div style={styles.authentication}>
+                 <Registration store={store}/>
+                <LoginToggle userAuthenticated={this.props.userAuthenticated} store={store}/>
+               </div>
 
-               <ActiveTimer handleSubmit={recordTimer}/>
 
                <div style={styles.links} >
                  <Link to="/timer">Timer</Link>
                  <Link to="/slider">Slider Example</Link>
                </div>
                
-               <LoginToggle userAuthenticated={this.props.userAuthenticated} store={store}/>
+               
+               <ActiveTimer handleSubmit={recordTimer}/>
                </div>
               )
     }

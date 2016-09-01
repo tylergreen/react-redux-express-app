@@ -21,6 +21,7 @@ export default class LoginForm extends React.Component {
             })
       
         return <div style={styles.login}>
+            <h1>Sign In</h1>
             Email:
             <input
         type="email"
