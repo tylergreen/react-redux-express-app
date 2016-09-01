@@ -5,17 +5,23 @@ import { createStore, applyMiddleware, combineReducers } from 'redux'
 import { Provider, connect } from 'react-redux'
 import thunk from 'redux-thunk'
 
-import { reduxForm, reducer as formReducer } from 'redux-form'
 
 import fetch from 'fetch-ponyfill'
 import reactCSS from 'reactcss'
+import CSSModules from 'react-css-modules'
+
+
+import {MySlider} from './components/mySlider.jsx'
+import OrigSlider from './components/origSlider.jsx'
+import Registration from './components/registration.jsx'
+import LoginForm from './components/loginForm.jsx'
 
 import login from './reducers/login'
 import timerReducer from './reducers/timerReducer'
 
 import {
     loginAction, logoutAction, getMessage,
-    saveProfileAction, registerAction,
+    saveProfileAction, 
     startTimer,
     stopTimer,
     resumeTimer,
@@ -28,15 +34,13 @@ import {
 
 import { Router, Route, Link, browserHistory } from 'react-router'
 
-//let _ = require('lodash/fp')
 let _ = require('lodash')
 
 console.log(login)
 
 const reducers =  {
     login: login,
-    timer: timerReducer,
-    form: formReducer //redux-form
+    timer: timerReducer
 }
 
 const reducer = combineReducers(reducers)
@@ -66,15 +70,13 @@ let store = createStore(reducer,
                         applyMiddleware(timerMiddleware,
                                         thunk));
 
-class LoginForm extends React.Component {
+class LoginToggle extends React.Component {
     render() {
-        if(this.props.loggedIn){
-            return <div>
-                <UserProfileForm user={this.props.user}> </UserProfileForm>
-                </div>
+        if(this.props.userAuthenticated){
+            return <UserProfileForm user={this.props.user} />
         }
         else {
-            return <HOFLoginForm> </HOFLoginForm>
+            return <LoginForm store={this.props.store}/>
         }
     }
 }
@@ -136,49 +138,6 @@ class UserProfileForm extends React.Component {
     }
 }
 
-//change this name please
-//class LoginButton extends React.Component {
-class HOFLoginForm extends React.Component {
-    constructor() {
-        super()
-        
-        this.login = this.login.bind(this) // react es6 doesn't auto bind methods to itself
-    }
-    
-    render() {
-        return <div>
-            <input
-        type="email"
-        name="email"
-        ref={(c) => this.email_input = c}
-        ></input>
-            <input
-        type="password"
-        name="password"
-        ref={(c) => this.password_input = c}
-            ></input>
-            <button onClick={this.login}>
-            Login
-           </button>
-           </div>
-    }
-
-    login() {
-        console.log("Logging In!")
-        console.log("Store state:")
-        console.log(store.getState())
-        console.log("inputs refs:")
-        let email = ReactDOM.findDOMNode(this.email_input).value
-        let password =
-            ReactDOM.findDOMNode(this.password_input).value
-        console.log(email)
-        console.log(password)
-        store.dispatch(loginAction(email, password))
-        // can change this with react-redo connect
-        console.log("New state:")
-        console.log(store.getState())
-    }
-}
 
 class LogoutButton extends React.Component {
     render() {
@@ -218,7 +177,7 @@ class Target extends React.Component {
 
         let myCircle = new Paper.Path.Circle(new Paper.Point(parseInt(this.props.x), this.props.y), this.props.size);
         myCircle.style = {
-            fillColor: this.color(this.props.loggedIn),
+            fillColor: this.color(this.props.userAuthenticated),
             strokeColor: 'black',
             strokeWidth: 10,
         }
@@ -256,23 +215,77 @@ class TodoItem extends React.Component {
     }
 }
 
+class Logo extends React.Component {
+    render(){
+        const styles = reactCSS({
+            'default': {
+                logo: {
+                    fill: "rgb(100, 0, 0)"
+                }
+            }
+        })
+        
+        return <svg width="70" height="70">
+            <circle cx="35" cy="35" r="30" style={styles.logo}/>
+            </svg>
+    }
+}
+
 class Home extends React.Component {
     render(){
+        const styles = reactCSS({
+            'default': {
+                container: {
+                    background: 'green',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start'
+                },
+                links: {
+                    display: 'flex',
+                    flexFlow: 'column'
+                }
+            }
+        })
         return(<div>
-               <h1> Tyler Rules! </h1>
-               <Link to="/register">Sign Up</Link>
-               <Link to="/timer">Timer</Link>
-               
-               <ActiveTimer handleSubmit={recordTimer}></ActiveTimer>
-               
-               <ColorTarget name='target1' x={55} y={55} size={50} />
+                 <div style={styles.container}>
+                   <Logo/>
+                   <h1> Habit Hookup! </h1>
+                   <Link to="/login">Sign In</Link>
+                 </div>
 
+               <Registration store={store}/>
+
+               <ActiveTimer handleSubmit={recordTimer}/>
+
+               <div style={styles.links} >
+                 <Link to="/timer">Timer</Link>
+                 <Link to="/slider">Slider Example</Link>
+               </div>
                
-               <ToggleLogin></ToggleLogin>
+               <LoginToggle userAuthenticated={this.props.userAuthenticated} store={store}/>
                </div>
               )
     }
 }
+
+const mapStateToProps = (state) => {
+    console.log("state is...")
+    console.log(state)
+    console.log("user is...")
+    console.log(state.user)
+    return {
+        userAuthenticated: state.isLoggedIn,
+        user: state.user
+    }
+}
+
+// connect will return a new component
+// can get rid of this if we just embed in toggle login
+var ActiveHome = connect(
+    mapStateToProps
+)(Home)
+
 
 
 function format_ms(milliseconds){
@@ -530,66 +543,8 @@ class RecordsDisplay extends React.Component {
 
 }
 
-/// end TIMER 
+/// end TIMER
 
-class Registration extends React.Component {
-    constructor() {
-        super()
-        
-        this.register = this.register.bind(this) // react es6 doesn't auto bind methods to itself
-    }
-
-    render(){
-        return (<div>
-                <h1> Register so we can identify you</h1>
-                <div>
-                <input
-                type="email"
-                name="email"
-                ref={(c) => this.email_input = c}
-                ></input>
-                </div>
-                <input
-                type="password"
-                name="password"
-                ref={(c) => this.password_input = c}
-                ></input>
-                <button onClick={this.register}>
-                Sign Up!
-                </button>
-                </div>
-        )
-    }
-
-    register(){
-        let email = ReactDOM.findDOMNode(this.email_input).value
-        let password =
-            ReactDOM.findDOMNode(this.password_input).value
-        store.dispatch(registerAction(email, password))
-
-    }
-}
-
-const mapStateToProps = (state) => {
-    console.log("state is...")
-    console.log(state)
-    console.log("user is...")
-    console.log(state.user)
-    return {
-        loggedIn: state.isLoggedIn,
-        user: state.user
-    }
-}
-
-// connect will return a new component
-// can get rid of this if we just embed in toggle login
-let ColorTarget = connect(
-    mapStateToProps
-)(Target)
-
-let ToggleLogin = connect(
-    mapStateToProps
-)(LoginForm)
 
 console.log(document.getElementById('content'));
 
@@ -597,11 +552,11 @@ ReactDOM.render(
         <Provider store={store} >
         <div>
         <Router history={browserHistory} >
-        <Route path="/" component={Home} />
-        <Route path="login" component={ToggleLogin} />
+        <Route path="/" component={ActiveHome} />
+        <Route path="login" component={LoginToggle} />
         <Route path="register" component={Registration} />
-        <Route path="timer" component={ActiveTimer}
-        />
+        <Route path="slider" component={OrigSlider} />
+        <Route path="timer" component={ActiveTimer} />
         </Router>
         </div>
         </Provider>,
