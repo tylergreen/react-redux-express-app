@@ -222,14 +222,22 @@ class Home extends React.Component {
                     background: 'green',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'flex-start'
+                    alignItems: 'center'
                 },
                 authentication: {
                     display: 'flex',
+                    justifyContent: 'space-around',
+                    margin: '1em'
                 },
                 links: {
                     display: 'flex',
-                    flexFlow: 'column'
+                    justifyContent: 'space-around',
+                    margin: '1em'
+                },
+                timer: {
+                    display: 'flex',
+                    justifyContent: 'center',
+                    margin: '3em'
                 }
             }
         })
@@ -245,14 +253,16 @@ class Home extends React.Component {
                 <LoginToggle userAuthenticated={this.props.userAuthenticated} store={store}/>
                </div>
 
+               <div style={styles.timer}>
+               <ActiveTimer handleSubmit={recordTimer} />
+               </div>
 
                <div style={styles.links} >
                  <Link to="/timer">Timer</Link>
-                 <Link to="/slider">Slider Example</Link>
+                 <Link to="/slider">Slider</Link>
                </div>
                
                
-               <ActiveTimer handleSubmit={recordTimer}/>
                </div>
               )
     }
@@ -301,15 +311,25 @@ class Timer extends React.Component {
     }
     
     render() {
-        return <div>
+        const styles = reactCSS({
+            'default': {
+                timer: {
+                    display: 'flex',
+                    flexFlow: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'left',
+                    width: '60%'
+                    
+                }
+            }
+        })
+        return <div style={styles.timer}>
             <h1>Timer</h1>
             <TimerLabel/>
-            <div> Start Time: {this.startTimeStamp() } </div>
+            <div>Start Time: {this.startTimeStamp() } </div>
             <TimerDisplay elapsed={format_ms(this.props.elapsed)}/>
             <TimerControl timer_state={this.props.timer_state} label ={ this.props.label }/>
             <LapDisplay lapTimes={this.props.lapTimes}/>
-
-        <RecordsDisplay/>
           </div>
     }
 }
@@ -348,7 +368,10 @@ class TimerDisplay extends React.Component {
         const styles = reactCSS({
             'default': {
                 display: {
-                    fontSize: '2em',
+                    fontSize: '5em',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    margin: '0.5em'
                 }}})
 
         return <div style={styles.display}>
@@ -357,23 +380,28 @@ class TimerDisplay extends React.Component {
     }
 }
 
-
-
 class TimerControl extends React.Component {
     render(){
         return this.updateButtons()
     }
 
     updateButtons(){
+        const styles = reactCSS({
+            'default': {
+                container: {
+                    display: 'flex',
+                    justifyContent: 'center'
+                }}})
+        
         if(this.isReady()){
-            return <StartButton></StartButton>
+            return <div style={styles.container}> <StartButton/></div>
         } else if (this.isRunning()){
-            return <div>
+            return <div style={styles.container}>
                 <StopButton/>
                 <LapButton/>
                 </div>
         } else if (this.isStopped()) {
-            return <div>
+            return <div style={styles.container}>
                 <ResumeButton/>
                 <RecordButton/>
                 <ResetButton/>
@@ -381,10 +409,6 @@ class TimerControl extends React.Component {
         }
         
         else {
-            console.log("State Error Timer should be in one of 3 states")
-            console.log(this.props.timer_state)
-            console.log(store.getState())
-            
             return <StartButton></StartButton>
         }
     }
@@ -419,20 +443,22 @@ class TimerButton extends React.Component {
             'default': {
                 button: {
                     background: this.props.color,
-                    borderRadius: '28px',
-                    border: '1px solid #18ab29',
+                    borderRadius: '2em',
+                    border: '0.5em solid',
                     display:'inline-block',
                     cursor:'pointer',
                     color:'#ffffff',
                     fontFamily:'Arial',
-                    fontSize:'17px',
-                    padding:'16px 31px',
-                    textDecoration:'none',
-                    textShadow:'0px 1px 0px #2f6627',
+                    fontSize:'2em',
+                    padding:'1em 1em'
                 }
             }})
         
-        return <button style={styles.button} onClick={this.props.onClick} type={this.props.type}> {this.props.name} </button>
+        return <button style={styles.button}
+        onClick={this.props.onClick}
+        type={this.props.type}>
+            {this.props.name}
+        </button>
     }
 }
 

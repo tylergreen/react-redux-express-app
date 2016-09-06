@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import reactCSS from 'reactcss'
 import { registerAction } from '../actions/index'
+import ButtonStyles from './styles/buttonStyles'
 
 export default class Registration extends React.Component {
     constructor() {
@@ -15,10 +16,10 @@ export default class Registration extends React.Component {
             'default': {
                 registration: {
                     display: 'flex',
-                    flexFlow: 'column',
+                    flexFlow: 'column'
                 }
             }
-            })
+        })
       
         return (<div style={styles.registration}>
                 
@@ -36,7 +37,7 @@ export default class Registration extends React.Component {
                 ref={(c) => this.password_input = c}
                 />
                 
-                <button onClick={this.register}>
+                <button style={ButtonStyles.button} onClick={this.register}>
                 Sign Up!
                 </button>
                 
