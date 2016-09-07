@@ -13,8 +13,10 @@ import CSSModules from 'react-css-modules'
 
 import {MySlider} from './components/mySlider.jsx'
 import OrigSlider from './components/origSlider.jsx'
-import Registration from './components/registration.jsx'
-import LoginForm from './components/loginForm.jsx'
+import Logo from './components/logo.jsx'
+
+
+import AuthenticationBar from './components/authenticationBar.jsx'
 
 import login from './reducers/login'
 import timerReducer from './reducers/timerReducer'
@@ -47,22 +49,10 @@ const reducers =  {
 
 const reducer = combineReducers(reducers)
 
-
-
 let store = createStore(reducer,
                         applyMiddleware(timerMiddleware,
                                         thunk));
 
-class LoginToggle extends React.Component {
-    render() {
-        if(this.props.userAuthenticated){
-            return <UserProfileForm user={this.props.user} />
-        }
-        else {
-            return <LoginForm store={this.props.store}/>
-        }
-    }
-}
 
 class UserProfileForm extends React.Component {
     constructor() {
@@ -198,21 +188,6 @@ class TodoItem extends React.Component {
     }
 }
 
-class Logo extends React.Component {
-    render(){
-        const styles = reactCSS({
-            'default': {
-                logo: {
-                    fill: "rgb(100, 0, 0)"
-                }
-            }
-        })
-        
-        return <svg width="70" height="70">
-            <circle cx="35" cy="35" r="30" style={styles.logo}/>
-            </svg>
-    }
-}
 
 class Home extends React.Component {
     render(){
@@ -222,12 +197,11 @@ class Home extends React.Component {
                     background: 'green',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center'
+                    alignItems: 'center',
                 },
-                authentication: {
-                    display: 'flex',
-                    justifyContent: 'space-around',
-                    margin: '1em'
+                h1: {
+                    color: '#FFF',
+                    fontSize: '3em'
                 },
                 links: {
                     display: 'flex',
@@ -244,14 +218,14 @@ class Home extends React.Component {
         return(<div>
                  <div style={styles.container}>
                    <Logo/>
-                   <h1> Habit Hookup! </h1>
-                   <Link to="/login">Sign In</Link>
+               <h1 style={styles.h1}> Habit Hookup! </h1>
+                   <Logo/>
                  </div>
 
-               <div style={styles.authentication}>
-                 <Registration store={store}/>
-                <LoginToggle userAuthenticated={this.props.userAuthenticated} store={store}/>
-               </div>
+               <AuthenticationBar authorizationStatus={this.props.userAuthenticated}
+               user={this.props.user}
+               store={store} />
+
 
                <div style={styles.timer}>
                <ActiveTimer handleSubmit={recordTimer} />
@@ -274,8 +248,8 @@ const mapStateToProps = (state) => {
     console.log("user is...")
     console.log(state.user)
     return {
-        userAuthenticated: state.isLoggedIn,
-        user: state.user
+        userAuthenticated: state.login.isLoggedIn,
+        user: state.login.user
     }
 }
 
@@ -568,8 +542,6 @@ ReactDOM.render(
         <div>
         <Router history={browserHistory} >
         <Route path="/" component={ActiveHome} />
-        <Route path="login" component={LoginToggle} />
-        <Route path="register" component={Registration} />
         <Route path="slider" component={OrigSlider} />
         <Route path="timer" component={ActiveTimer} />
         </Router>

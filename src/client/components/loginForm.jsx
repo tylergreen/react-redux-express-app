@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import reactCSS from 'reactcss'
 import { loginAction } from '../actions/index'
-
+import ButtonStyles from './styles/buttonStyles'
 
 export default class LoginForm extends React.Component {
     constructor() {
@@ -34,7 +34,7 @@ export default class LoginForm extends React.Component {
         name="password"
         ref={(c) => this.password_input = c}
             />
-            <button onClick={this.login}>
+            <button style={ButtonStyles.button} onClick={this.login}>
             Login
            </button>
            </div>
