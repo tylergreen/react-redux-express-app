@@ -278,8 +278,10 @@ function format_ms(milliseconds){
 class Timer extends React.Component {
 
     startTimeStamp(){
-        if(this.props.originalTimeStamp)
-            return new Date(this.props.originalTimeStamp).toDateString()
+        if(this.props.originalTimeStamp){
+            var date = new Date(this.props.originalTimeStamp)
+            return `${date.toDateString()} ${date.toTimeString()}`
+        }
         else
             return ""
     }

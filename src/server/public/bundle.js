@@ -492,7 +492,10 @@
 	    _createClass(Timer, [{
 	        key: 'startTimeStamp',
 	        value: function startTimeStamp() {
-	            if (this.props.originalTimeStamp) return new Date(this.props.originalTimeStamp).toDateString();else return "";
+	            if (this.props.originalTimeStamp) {
+	                var date = new Date(this.props.originalTimeStamp);
+	                return date.toDateString() + ' ' + date.toTimeString();
+	            } else return "";
 	        }
 	    }, {
 	        key: 'render',
