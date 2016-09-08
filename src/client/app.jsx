@@ -13,10 +13,10 @@ import CSSModules from 'react-css-modules'
 
 import {MySlider} from './components/mySlider.jsx'
 import OrigSlider from './components/origSlider.jsx'
-import Logo from './components/logo.jsx'
 
 
 import AuthenticationBar from './components/authenticationBar.jsx'
+import TopBar from './components/topBar.jsx'
 
 import login from './reducers/login'
 import timerReducer from './reducers/timerReducer'
@@ -66,6 +66,8 @@ class UserProfileForm extends React.Component {
         let lastName
         let userName
         let email
+        console.log("USER is")
+        console.log(this.props.user)
                 
         return <div>
             <div>
@@ -216,12 +218,7 @@ class Home extends React.Component {
             }
         })
         return(<div>
-                 <div style={styles.container}>
-                   <Logo/>
-               <h1 style={styles.h1}> Habit Hookup! </h1>
-                   <Logo/>
-                 </div>
-
+               
                <AuthenticationBar authorizationStatus={this.props.userAuthenticated}
                user={this.props.user}
                store={store} />
@@ -233,7 +230,8 @@ class Home extends React.Component {
 
                <div style={styles.links} >
                  <Link to="/timer">Timer</Link>
-                 <Link to="/slider">Slider</Link>
+               <Link to="/slider">Slider</Link>
+
                </div>
                
                
@@ -246,7 +244,7 @@ const mapStateToProps = (state) => {
     console.log("state is...")
     console.log(state)
     console.log("user is...")
-    console.log(state.user)
+    console.log(state.login.user)
     return {
         userAuthenticated: state.login.isLoggedIn,
         user: state.login.user
@@ -535,16 +533,35 @@ class RecordsDisplay extends React.Component {
 }
 
 /// end TIMER
+function isAuthenticated(){
+    return store.getState().login.isLoggedIn
+}
 
 
-console.log(document.getElementById('content'));
+function requireAuth(nextState, replace) {
+    if (!isAuthenticated()) {
+        replace({
+            pathname: '/', // redirect to some kind of message
+            state: { nextPathname: nextState.location.pathname }
+                
+        })
+    }
+}
+
+class Profile extends React.Component {
+    render(){
+        return <UserProfileForm user={store.getState().login.user} />
+    }
+}
 
 ReactDOM.render(
         <Provider store={store} >
         <div>
+        <TopBar/>
         <Router history={browserHistory} >
         <Route path="/" component={ActiveHome} />
         <Route path="slider" component={OrigSlider} />
+        <Route path="profile" component={Profile} onEnter={requireAuth} />
         <Route path="timer" component={ActiveTimer} />
         </Router>
         </div>

@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react'
 import reactCSS from 'reactcss'
 import Registration from './registration.jsx'
 import LoginForm from './loginForm.jsx'
+import { Link } from 'react-router'
 
 export default class extends Component{
     render(){
@@ -16,7 +17,9 @@ export default class extends Component{
         })
 
         if(this.props.authorizationStatus){
-            return <div> Welcome {this.props.user.firstName} ! {this.props.user.email} </div>
+            return <div> Welcome {this.props.user.firstName} ! {this.props.user.email}
+                <Link to="/profile">Edit profile</Link>
+            </div>
         } else {
             return <div style={styles.container}>
                 <Registration store={this.props.store}/>
