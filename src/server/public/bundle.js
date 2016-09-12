@@ -45258,12 +45258,6 @@
 	function loginAction(email, password) {
 	    return function (dispatch) {
 
-	        //  dispatch(loginAction(email, password)) // not sure if we need email and password for this
-	        console.log("email");
-	        console.log(email);
-	        console.log("password");
-	        console.log(password);
-
 	        return fetch('/login', {
 	            method: 'post',
 	            headers: {

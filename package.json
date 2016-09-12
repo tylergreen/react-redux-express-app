@@ -5,7 +5,9 @@
   "main": "src/server/app.js",
   "author": "Tyler Green",
   "scripts": {
-    "start": "node src/server/app.js"
+      "start": "node src/server/app.js",
+      "test": "NODE_ENV=test mocha test/server"
+      
   },
   "engines": {
     "node": "5.7.0",
@@ -36,6 +38,7 @@
     "pg": "~4.4.1",
     "pg-hstore": "~2.3.2",
     "react": "^15.1.0",
+    "react-chartjs": "^0.8.0",
     "react-css-modules": "^3.7.10",
     "react-dom": "^15.1.0",
     "react-rangeslider": "^1.0.3",
@@ -55,6 +58,7 @@
     "less": "^2.7.1",
     "less-loader": "^2.2.3",
     "mocha": "^2.5.3",
+    "node-fetch": "^1.6.0",
     "style-loader": "^0.13.1",
     "supertest": "^1.2.0",
     "url-loader": "^0.5.7",
