@@ -25,7 +25,10 @@ app.use('/styles', express.static(path.join(__dirname, '/styles')))
 
 app.use('/', appRouter)
 
-db.sync().then(() => app.listen(config.get('port')))
+// just not sure how to do this better for heroku
+let port = process.env.PORT || config.get('port') 
+
+db.sync().then(() => app.listen(port))
 
 console.log(`Server started on port ${config.get('port')}`)
 
