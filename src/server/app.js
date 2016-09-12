@@ -26,7 +26,7 @@ app.use('/styles', express.static(path.join(__dirname, '/styles')))
 app.use('/', appRouter)
 
 // just not sure how to do this better for heroku
-let port = process.env.PORT || config.get('port') 
+var port = process.env.PORT || config.get('port') 
 
 db.sync().then(() => app.listen(port))
 
