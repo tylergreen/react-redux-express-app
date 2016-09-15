@@ -5,7 +5,7 @@
   "main": "src/server/app.js",
   "author": "Tyler Green",
   "scripts": {
-      "start": "node src/server/app.js",
+      "start": "node src/server/appStart.js",
       "test": "NODE_ENV=test mocha test/server"
       
   },
