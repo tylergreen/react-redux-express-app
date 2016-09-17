@@ -5,9 +5,8 @@
   "main": "src/server/app.js",
   "author": "Tyler Green",
   "scripts": {
-      "start": "node src/server/appStart.js",
-      "test": "NODE_ENV=test mocha test/server"
-      
+    "start": "node src/server/appStart.js",
+    "test": "NODE_ENV=test mocha test/server"
   },
   "engines": {
     "node": "5.7.0",
@@ -61,6 +60,7 @@
     "node-fetch": "^1.6.0",
     "style-loader": "^0.13.1",
     "supertest": "^1.2.0",
+    "supertest-as-promised": "^4.0.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.2"
   }

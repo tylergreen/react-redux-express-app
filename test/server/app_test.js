@@ -1,127 +1,140 @@
+
 var should = require('chai').should(),
     expect = require('chai').expect,
-    supertest = require('supertest'),
+    supertest = require('supertest-as-promised'),
     config = require('config'),
     port = config.get('port'),
     testingUrl = 'http://localhost:' + port,
-    api = supertest(testingUrl), 
+    api = supertest(testingUrl),
     server = require('../../src/server/app.js') // figure out how to get to root path easier to avoid coupling both project AND test directory structure
 
-  
-
-describe('Get /', () => {
-    var app
-    
-    before(() => {
-        console.log("PORT")
-        console.log(config.get('port'))
-        app = server.listen(config.get('port'))
-    })
-           
-
-    before(() => {
-        app.close
-    })
-    
-    it('should render the homepage', (done) => {
-        api.get('/')
-            .expect(200, done)
-    })
-}
-        )
-
-// move to separate test helpers file or pre-load the fixture
 function createAccount(email, password){
     var user = JSON.stringify({ email: email,
                                 password: password})
 }
-
-describe('Signup -- Account Creation', () => {
-    var user = JSON.stringify({ email: "dude@gmail.com",
-                                password: "abcde"})
+  
+describe('Express Rest API', () => {
+    var app
     
-    it('creates an account', (done) => {
-        api.post('/signup')
-            .set('Accept', 'application/json')
-            .set('Content-Type', 'application/json')
-            .send(user)
-            .expect(200)
-            .expect((res) => {
-                user_response = res.body.user 
-                return (user_response.hasOwnProperty('email') &&
-                        user_response.hasOwnProperty('username') &&
-                        user_response.hasOwnProperty('firstName') &&
-                        user_response.hasOwnProperty('lastName'))
-            })
-            .end(done)
-    })})
+    beforeEach(() => {
+        console.log(`Testing Port: ${config.get('port')}`)
+        app = server.listen(config.get('port'))
+    })
+           
 
-describe('Post ', () =>{
-    //need to have an exising user
-    var user = JSON.stringify({ email: "dude@gmail.com",
-                                password: "abcde"})
-
-    var token;
-
-    before(() => {
-        api.post('/signup')
-            .set('Accept', 'application/json')
-            .set('Content-Type', 'application/json')
-            .send(user)
-            .end((err, resp) => {
-                token = resp.text.token
-            })
+    afterEach((done) => {
+        app.close(done)
     })
 
-    // can clear DB after
+    // move to separate test helpers file or pre-load the fixture
 
-    it('logs into an account', (done) => {
-        // user should already exist bc there is currently no setup or teardown
-        api.post('/login')
-            .set('Accept', 'application/json')
-            .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${token}`)
-            .send(user)
-            .expect(200)
-            .expect((res) => {
-                login_response = res.body.user // not sure this is right either
-                return ((login_response.hasOwnProperty('user') &&
-                         login_response.hasOwnProperty('token')))
+
+    describe('GET Homepage', () => {
+        it('should render the homepage', () => {
+            return api.get('/')
+                .expect(200)
+        })
+    })
+
+    describe('Signup -- Account Creation', () => {
+        var user = JSON.stringify({ email: "dude@gmail.com",
+                                    password: "abcde"})
+        
+        it('creates an account', () => {
+            return api.post('/signup')
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send(user)
+                .expect(200)
+                .then((res) => {
+                    user_response = res.body.user 
+                   return  expect(user_response.email).to.equal('dude@gmail.com') &&
+                    expect(user_response.username).to.equal(null) && 
+                    expect(user_response.firstName).to.equal(null) &&
+                    expect(user_response.lastName).to.equal(null)
             })
-        done()
+        })
+    })
+    
+    describe('Login', () =>{
+        // username being email is a little messed up here -- a miscue that cost me several hours 
+         var user = JSON.stringify({ username: "dude@gmail.com",
+                                     password: "abcde"})
+
+
+        var token
+
+        // need to add this a test fixture for test db
+        // before((done) => {
+        //     api.post('/signup')
+        //         .set('Accept', 'application/json')
+        //         .set('Content-Type', 'application/json')
+        //         .send(user)
+        //         .end(done)
+        // })
+
+        
+        it('logs into an account', () => {
+            // user should already exist bc there is currently no setup or teardown
+            return api.post('/login')
+                .type('application/json')
+                .accept('application/json')
+                .send(user)
+                .expect(200)
+                .then((res) => {
+                    login_response = res.body // not sure this is right either
+                    console.log("user is")
+                    console.log(res.body.user)
+                    return expect(login_response.user.email).to.equal("dude@gmail.com") &&
+                expect(login_response.token).to.not.equal(null)
+                })
+        })
+    })
+
+    describe('timings ', () =>{
+        var token
+
+        beforeEach(() => {
+            var user = JSON.stringify({ username: "dude@gmail.com",
+                                        password: "abcde"})
+        
+
+            return api.post('/login')
+                .accept('application/json')
+                .type('application/json')
+                .send(user)
+                .expect(200)
+                .then((res)  => {
+                    token = res.body.token
+                })
+        })
+
+    //need to have an exising user
+        var body = JSON.stringify({ 
+            label: "grocery"
+        })
+
+        it('can record a timing', () => {
+            
+        }
+          )
+
+        it('gets a list of timings', () => {
+            // user should already exist bc there is currently no setup or teardown
+            console.log("Token is ")
+            console.log(token)
+            return api.post('/timings')
+                .type('application/json')
+                .accept('application/json')
+                .set('Authorization', `Bearer ${token}`)
+                .send(body)
+                .expect(200)
+        })
     })
 })
 
-// describe('timings ', () =>{
-//     //need to have an exising user
-//     var user = JSON.stringify({ email: "dude@gmail.com",
-//                                 password: "abcde"})
 
-//     it('gets a list of timings', (done) => {
-//         // user should already exist bc there is currently no setup or teardown
-//         api.post('/login')
-//             .set('Accept', 'application/json')
-//             .set('Content-Type', 'application/json')
-//             .set('Authorization', `Bearer ${token}`)
-//             .send(user)
-//             .end((err, resp) => {
-//                 var token = resp.text.token
-//                 api.post('')
-//                 api.post('/timings')
-//                     .set('Accept', 'application/json')
-//                     .set('Content-Type', 'application/json')
-//                     .set('Authorization', `Bearer ${token}`)
-//                     .send(user)
-//                     .expect(200)
-//                     .expect((res) => {
-//                         console.log("timings response is ")
-//                         console.log(res)
-//                         login_response = res.body.user // not sure this is right either
-//                         return ((login_response.hasOwnProperty('user') &&
-//                                  login_response.hasOwnProperty('token')))
-//                     })
-//                     .end(done)
-//             }
-//                 )
-// })
 
+
+        
+        
