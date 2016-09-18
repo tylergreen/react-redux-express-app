@@ -110,17 +110,31 @@ describe('Express Rest API', () => {
         })
 
     //need to have an exising user
-        var body = JSON.stringify({ 
-            label: "grocery"
-        })
 
         it('can record a timing', () => {
+
+            var body = JSON.stringify({ 
+                label: "grocery",
+                startTime: Date.now(),
+                duration: 5000
+            })
             
+            api.post('/recordTimer')
+                .type('application/json')
+                .accept('application/json')
+                .set('Authorization', `Bearer ${token}`)
+                .send(body)
+                .expect(200)
         }
           )
 
         it('gets a list of timings', () => {
             // user should already exist bc there is currently no setup or teardown
+
+            var body = JSON.stringify({ 
+                label: "grocery"
+            })
+
             console.log("Token is ")
             console.log(token)
             return api.post('/timings')

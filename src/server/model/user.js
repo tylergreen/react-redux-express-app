@@ -3,9 +3,6 @@ var Sequelize = require('sequelize')
 var attributes = {
   username: {
     type: Sequelize.STRING,
-    validate: {
-      is: /^[a-z0-9\_\-]+$/i,
-    }
   },
   email: {
     type: Sequelize.STRING,
@@ -20,13 +17,6 @@ var attributes = {
   lastName: {
       type: Sequelize.STRING,
       max: 128
-  },
-  password: {
-      type: Sequelize.STRING,
-      max: 24
-  },
-  salt: {
-    type: Sequelize.STRING
   }
 }
 

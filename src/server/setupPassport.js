@@ -27,50 +27,16 @@ module.exports = (app) => {
                 } else {
                     return done(null, false, {message: 'Bad Token'})
                 }
-        })
-    }))
+            })
+        }))
+
+    passport.use(model.User.createStrategy())
     
-    passport.use(new LocalStrategy(
-        {
-//            passReqToCallback: true,
-            session: false
-        },
-    function(email, password, done) {
-      model.User.findOne({
-        where: {
-          'email': email  // make this an index
-        }
-      }).then(function (user) {
-        if (user == null) {
-          return done(null, false, { message: 'Incorrect credentials.' })
-        }
-        
-        var hashedPassword = bcrypt.hashSync(password, user.salt)
-        
-        if (user.password === hashedPassword) {
-          return done(null, user)
-        }
-        
-        return done(null, false, { message: 'Incorrect credentials.' })
-      })
-    }
-  ))
+    passport.serializeUser(
+        model.User.serializeUser()
+    )
 
-  passport.serializeUser(function(user, done) {
-    done(null, user.id)
-  })
-
-  passport.deserializeUser(function(id, done) {
-    model.User.findOne({
-      where: {
-        'id': id
-      }
-    }).then(function (user) {
-      if (user == null) {
-        done(new Error('Wrong user id.'))
-      }
-      
-      done(null, user)
-    })
-  })
+    passport.deserializeUser(
+        model.User.deserializeUser()
+    )
 }

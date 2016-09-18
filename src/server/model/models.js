@@ -1,8 +1,11 @@
 var UserMeta = require('./user.js'),
     TimeRecordMeta = require('./timeRecord.js'),
-    Sequelize = require('sequelize')
+    Sequelize = require('sequelize'),
+    passportLocalSequelize= require('passport-local-sequelize')
 
-if(process.env.DATABASE_URL){
+
+// need to separate this out into a heroku config
+if(process.env.DATABASE_URL){ // running  on heroku ?
     var match = process.env.DATABASE_URL.split(":"),
         
     sequelize = new Sequelize(process.env.DATABASE_URL, {
@@ -20,7 +23,10 @@ if(process.env.DATABASE_URL){
 
 module.exports = sequelize
 
-var User = sequelize.define('Users', UserMeta.attributes, UserMeta.options)
+var User = passportLocalSequelize.defineUser(sequelize,
+                                             UserMeta.attributes)
+                                             
+//                                             UserMeta.options)
 
 var TimeRecord = sequelize.define('TimeRecords', TimeRecordMeta.attributes, TimeRecordMeta.options)
 
