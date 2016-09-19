@@ -3,7 +3,6 @@ var config = require('config')
 var LocalStrategy = require('passport-local').Strategy
 var JwtStrategy = require('passport-jwt').Strategy
 var ExtractJwt  = require('passport-jwt').ExtractJwt
-var bcrypt = require('bcrypt')
 var model = require('./model/models.js')
 
 module.exports = (app) => {
