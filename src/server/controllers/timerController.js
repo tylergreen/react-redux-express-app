@@ -1,4 +1,5 @@
-var model = require('../model/models.js')
+var model = require('../model/models.js'),
+    _ = require('lodash')    
 
 module.exports.record = function(req, res) {
     console.log("REQ IS")
@@ -27,7 +28,19 @@ module.exports.timings = function(req, res) {
     }).then((timings) => {
         console.log("timings")
         console.log(timings)
-        res.json(timings)
+
+        var chartData = { labels: _.map(timings, (i) => i.startTime),
+                          datasets: [{
+                              data: _.map(timings, (i) => i.duration),
+                              backgroundColor: 'rgb(255, 0, 0, 0.2)',
+                              borderColor: 'rgb(0, 255, 0, 0.2)',
+                              borderWidth: 3
+                          }]
+                        }
+
+        console.log("CHART DATA is")
+        console.log(chartData)
+        res.json(chartData)
     }
            )
 }

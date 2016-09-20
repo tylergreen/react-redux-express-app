@@ -13,7 +13,7 @@ import CSSModules from 'react-css-modules'
 
 import {MySlider} from './components/mySlider.jsx'
 import OrigSlider from './components/origSlider.jsx'
-
+import TimeChart from './components/timeChart.jsx'
 
 import AuthenticationBar from './components/authenticationBar.jsx'
 import TopBar from './components/topBar.jsx'
@@ -228,6 +228,10 @@ class Home extends React.Component {
                <ActiveTimer handleSubmit={recordTimer} />
                </div>
 
+               <div style={styles.timeChart}>
+               <TimeChart chartData={this.props.chartData} store={store} />
+               </div>
+
                <div style={styles.links} >
                  <Link to="/timer">Timer</Link>
                <Link to="/slider">Slider</Link>
@@ -247,7 +251,8 @@ const mapStateToProps = (state) => {
     console.log(state.login.user)
     return {
         userAuthenticated: state.login.isLoggedIn,
-        user: state.login.user
+        user: state.login.user,
+        chartData: state.timer.chartData
     }
 }
 

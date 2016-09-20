@@ -6,12 +6,54 @@ export const updateLabel = (label) => {
     }
 }
 
+export function searchTimings(label, jwt) {
+    return (dispatch) => {
+        return fetch('/timings', {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                "Authorization" :  'Bearer ' + jwt,
+            },
+            body: JSON.stringify({
+                label: label
+        })
+        }).then(response => {
+            if (response.status >= 200 && response.status < 300){
+                return response.text()
+            }
+            else {
+                let error = new Error(response.statusText)
+                error.response = response
+                throw error
+            }
+        }).then(json => {
+            console.log("got timing data from server")
+            console.log(json)
+            let parsed_json = JSON.parse(json)
+            return dispatch(receivedChartData(parsed_json)) //transition to logged in state
+        }).catch(err => {
+            console.log(err);
+            // flash invalid login credential
+        })
+            } 
+}
+
+export const updateSearchLabel = (label) => {
+    return {
+        type: "UPDATE_SEARCH_LABEL",
+        label: label,
+
+    }
+}
+
 // change email to expire the JWT 
 export const logoutAction = (email) => {
     return {
         type: "LOGOUT",
         email: email
     }
+
 }
 
 export function registerAction(email, password){
@@ -137,6 +179,13 @@ function receivedAuthorization(json) {
         type: "LOGIN",
         user: json.user,
         jwt: json.token
+    }
+}
+
+function receivedChartData(json){
+    return {
+        type: "RECEIVED_CHART_DATA",
+        chartData: json
     }
 }
 

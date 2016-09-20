@@ -143,6 +143,24 @@ describe('Express Rest API', () => {
                     return expect(result.length).to.equal(1) && expect(result[0].duration).to.equal(5000) && expect(result[0].label).to.equal('grocery')
                 })
         })
+
+        it('gets a list of timings', () => {
+
+            var timingsBody = JSON.stringify({ 
+                label: "something-nonexistant"
+            })
+
+            return api.post('/timings')
+                .type('application/json')
+                .accept('application/json')
+                .set('Authorization', `Bearer ${token}`)
+                .send(timingsBody)
+                .expect(200)
+                .then((res) => {
+                    result = res.body
+                    return expect(result).to.eql([])
+                })
+        })
     })
 })
 

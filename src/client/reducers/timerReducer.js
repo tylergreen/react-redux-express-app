@@ -8,11 +8,20 @@ let initialState = {
     label: "",
     elapsed: 0,
     total_elapsed: 0,
-    lapTimes: []
+    lapTimes: [],
+    chartData: null
 }
 
 const timerReducer = (state=initialState, action) => {
     switch(action.type){
+    case 'RECEIVED_CHART_DATA':
+        return Object.assign({}, state, {
+            chartData: action.chartData
+        })
+    case 'UPDATE_SEARCH_LABEL':
+        return Object.assign({}, state, {
+            searchLabel: action.label
+        })
     case 'UPDATE_LABEL':
         return Object.assign({}, state, {
             label: action.label
