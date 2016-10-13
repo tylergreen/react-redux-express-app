@@ -196,10 +196,10 @@ class Home extends React.Component {
         const styles = reactCSS({
             'default': {
                 container: {
-                    background: 'green',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
+                    alignContent: 'center'
                 },
                 h1: {
                     color: '#FFF',
@@ -223,6 +223,7 @@ class Home extends React.Component {
                user={this.props.user}
                store={store} />
 
+               <div style={styles.container}>
 
                <div style={styles.timer}>
                <ActiveTimer handleSubmit={recordTimer} />
@@ -230,6 +231,8 @@ class Home extends React.Component {
 
                <div style={styles.timeChart}>
                <TimeChart chartData={this.props.chartData} store={store} />
+               </div>
+
                </div>
 
                <div style={styles.links} >

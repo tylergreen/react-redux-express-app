@@ -394,10 +394,10 @@
 	            var styles = (0, _reactcss2.default)({
 	                'default': {
 	                    container: {
-	                        background: 'green',
 	                        display: 'flex',
 	                        justifyContent: 'space-between',
-	                        alignItems: 'center'
+	                        alignItems: 'center',
+	                        alignContent: 'center'
 	                    },
 	                    h1: {
 	                        color: '#FFF',
@@ -423,13 +423,17 @@
 	                    store: store }),
 	                _react2.default.createElement(
 	                    'div',
-	                    { style: styles.timer },
-	                    _react2.default.createElement(ActiveTimer, { handleSubmit: _index.recordTimer })
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { style: styles.timeChart },
-	                    _react2.default.createElement(_timeChart2.default, { chartData: this.props.chartData, store: store })
+	                    { style: styles.container },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { style: styles.timer },
+	                        _react2.default.createElement(ActiveTimer, { handleSubmit: _index.recordTimer })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { style: styles.timeChart },
+	                        _react2.default.createElement(_timeChart2.default, { chartData: this.props.chartData, store: store })
+	                    )
 	                ),
 	                _react2.default.createElement(
 	                    'div',
@@ -44966,10 +44970,15 @@
 	                        display: 'flex',
 	                        justifyContent: 'space-around',
 	                        margin: '1em'
+
 	                    },
 	                    chart: {
 	                        display: 'flex',
 	                        justifyContent: 'center'
+	                    },
+	                    textInput: {
+	                        height: '2em',
+	                        width: '15em'
 	                    }
 	                }
 	            });
@@ -44981,7 +44990,7 @@
 	                    'div',
 	                    { style: styles.container },
 	                    'Search times by Label: ',
-	                    _react2.default.createElement('input', { type: 'text', onChange: this.handleChange }),
+	                    _react2.default.createElement('input', { type: 'text', style: styles.textInput, onChange: this.handleChange }),
 	                    _react2.default.createElement(
 	                        'button',
 	                        { style: _buttonStyles2.default.button, onClick: this.search },
@@ -45054,7 +45063,8 @@
 	    _createClass(_class, [{
 	        key: 'chartOptions',
 	        value: function chartOptions() {
-	            return {};
+	            return { scales: { yAxes: [{ type: 'logarithmic' }] }
+	            };
 	        }
 	    }, {
 	        key: 'render',
@@ -45074,11 +45084,7 @@
 	                    _react2.default.createElement(_reactChartjs.Bar, { data: this.props.chartData, options: this.chartOptions, width: '300', height: '250' })
 	                );
 	            } else {
-	                return _react2.default.createElement(
-	                    'div',
-	                    { style: styles.container },
-	                    'WAITING FOR CHART DATA'
-	                );
+	                return _react2.default.createElement('div', { style: styles.container });
 	            }
 	        }
 	    }]);
@@ -49327,6 +49333,7 @@
 	            body: JSON.stringify({
 	                username: email,
 	                password: password
+
 	            })
 	        }).then(function (response) {
 	            console.log('got response');
@@ -55327,9 +55334,9 @@
 
 	var _reactcss2 = _interopRequireDefault(_reactcss);
 
-	var _dragonLogo = __webpack_require__(452);
+	var _octaDragonLogo = __webpack_require__(452);
 
-	var _dragonLogo2 = _interopRequireDefault(_dragonLogo);
+	var _octaDragonLogo2 = _interopRequireDefault(_octaDragonLogo);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -55361,7 +55368,7 @@
 	                }
 	            });
 
-	            return _react2.default.createElement('img', { style: styles.logo, src: _dragonLogo2.default });
+	            return _react2.default.createElement('img', { style: styles.logo, src: _octaDragonLogo2.default });
 	        }
 	    }]);
 
@@ -55372,9 +55379,9 @@
 
 /***/ },
 /* 452 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "data:image/png;base64,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"
+	module.exports = __webpack_require__.p + "444533f6edfe4217bd49932b9e8e95d7.png";
 
 /***/ },
 /* 453 */

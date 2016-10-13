@@ -30,17 +30,22 @@ export default class extends Component{
                     display: 'flex',
                     justifyContent: 'space-around',
                     margin: '1em'
+                    
                 },
                 chart: {
                     display: 'flex',
                     justifyContent: 'center',
+                },
+                textInput: {
+                    height: '2em',
+                    width: '15em'
                 }
             }
         })
 
            return <div>
                <div style={styles.container}>
-                              Search times by Label: <input  type="text" onChange={this.handleChange} ></input>
+               Search times by Label: <input type="text" style={styles.textInput } onChange={this.handleChange} ></input>
 
                <button style={ButtonStyles.button} onClick={this.search}>
                Search Timings Database

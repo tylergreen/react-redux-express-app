@@ -1,6 +1,6 @@
 import React from 'react'
 import reactCSS from 'reactcss'
-import LogoImage from '../images/dragon-logo.png'
+import LogoImage from '../images/octa-dragon-logo.png'
 
 export default class extends React.Component {
     render(){
