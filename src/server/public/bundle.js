@@ -55361,8 +55361,8 @@
 	            var styles = (0, _reactcss2.default)({
 	                'default': {
 	                    logo: {
-	                        width: '100px',
-	                        height: '100px',
+	                        width: '50px',
+	                        height: '50px',
 	                        margin: '10px'
 	                    }
 	                }

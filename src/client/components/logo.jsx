@@ -7,8 +7,8 @@ export default class extends React.Component {
         const styles = reactCSS({
             'default': {
                 logo: {
-                    width: '100px',
-                    height: '100px',
+                    width: '50px',
+                    height: '50px',
                     margin: '10px'
                 }
             }
