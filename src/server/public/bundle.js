@@ -110,6 +110,10 @@
 
 	var _timerMiddleware2 = _interopRequireDefault(_timerMiddleware);
 
+	var _userMiddleware = __webpack_require__(560);
+
+	var _userMiddleware2 = _interopRequireDefault(_userMiddleware);
+
 	var _index = __webpack_require__(385);
 
 	var _reactRouter = __webpack_require__(388);
@@ -133,7 +137,7 @@
 
 	var reducer = (0, _redux.combineReducers)(reducers);
 
-	var store = (0, _redux.createStore)(reducer, (0, _redux.applyMiddleware)(_timerMiddleware2.default, _reduxThunk2.default));
+	var store = (0, _redux.createStore)(reducer, (0, _redux.applyMiddleware)(_timerMiddleware2.default, _userMiddleware2.default, _reduxThunk2.default));
 
 	var UserProfileForm = function (_React$Component) {
 	    _inherits(UserProfileForm, _React$Component);
@@ -432,7 +436,9 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { style: styles.timeChart },
-	                        _react2.default.createElement(_timeChart2.default, { chartData: this.props.chartData, store: store })
+	                        _react2.default.createElement(_timeChart2.default, {
+	                            chartData: this.props.chartData,
+	                            store: store })
 	                    )
 	                ),
 	                _react2.default.createElement(
@@ -44951,7 +44957,6 @@
 	    _createClass(_class, [{
 	        key: 'handleChange',
 	        value: function handleChange(event) {
-	            console.log("updating search label");
 	            this.props.store.dispatch((0, _index.updateSearchLabel)(event.target.value));
 	        }
 	    }, {
@@ -44989,11 +44994,16 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { style: styles.container },
-	                    'Search times by Label: ',
-	                    _react2.default.createElement('input', { type: 'text', style: styles.textInput, onChange: this.handleChange }),
+	                    'Search times by Label:',
+	                    _react2.default.createElement('input', {
+	                        type: 'text',
+	                        style: styles.textInput,
+	                        onChange: this.handleChange }),
 	                    _react2.default.createElement(
 	                        'button',
-	                        { style: _buttonStyles2.default.button, onClick: this.search },
+	                        {
+	                            style: _buttonStyles2.default.button,
+	                            onClick: this.search },
 	                        'Search Timings Database'
 	                    )
 	                ),
@@ -45063,7 +45073,8 @@
 	    _createClass(_class, [{
 	        key: 'chartOptions',
 	        value: function chartOptions() {
-	            return { scales: { yAxes: [{ type: 'logarithmic' }] }
+	            return {
+	                scales: { yAxes: [{ type: 'logarithmic' }] }
 	            };
 	        }
 	    }, {
@@ -45081,7 +45092,11 @@
 	                return _react2.default.createElement(
 	                    'div',
 	                    { style: styles.container },
-	                    _react2.default.createElement(_reactChartjs.Bar, { data: this.props.chartData, options: this.chartOptions, width: '300', height: '250' })
+	                    _react2.default.createElement(_reactChartjs.Bar, {
+	                        data: this.props.chartData,
+	                        options: this.chartOptions(),
+	                        width: '300', height: '250'
+	                    })
 	                );
 	            } else {
 	                return _react2.default.createElement('div', { style: styles.container });
@@ -49322,8 +49337,8 @@
 	}
 
 	function loginAction(email, password) {
+	    console.log("TRYING TO LOGIN");
 	    return function (dispatch) {
-
 	        return fetch('/login', {
 	            method: 'post',
 	            headers: {
@@ -49333,7 +49348,6 @@
 	            body: JSON.stringify({
 	                username: email,
 	                password: password
-
 	            })
 	        }).then(function (response) {
 	            console.log('got response');
@@ -49346,10 +49360,13 @@
 	            }
 	        }).then(function (json) {
 	            // {user: user, token: Base64String }
+	            console.log("got login response");
 	            console.log(json); // evidently we have to extract the response like this to force/eval the promise/thin
 	            var parsed_json = JSON.parse(json);
+
 	            return dispatch(receivedAuthorization(parsed_json)); //transition to logged in state
 	        }).catch(function (err) {
+	            console.log("An Error occured when logging in");
 	            console.log(err);
 	            // flash invalid login credential
 	        });
@@ -49369,9 +49386,11 @@
 
 	function receivedAuthorization(json) {
 	    return {
+	        // type: "RECEIVED_JWT_AUTH",
 	        type: "LOGIN",
 	        user: json.user,
-	        jwt: json.token
+	        jwt: json.token,
+	        jwtDuration: json.tokenDuration
 	    };
 	}
 
@@ -55399,6 +55418,7 @@
 	    var action = arguments[1];
 
 	    switch (action.type) {
+	        //    case 'RECEIVED_JWT_AUTH':
 	        case 'LOGIN':
 	            return Object.assign({}, state, {
 	                isLoggedIn: true,
@@ -86306,6 +86326,34 @@
 	                    return store.dispatch({ type: 'TICK',
 	                        currentTime: Date.now() });
 	                }, 1000);
+	            }
+	            next(action);
+	        };
+	    };
+	}
+
+/***/ },
+/* 560 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = userMiddleware;
+	function userMiddleware(store) {
+	    return function (next) {
+	        return function (action) {
+	            //        if (action.type === 'RECEIVED_JWT_AUTH') {
+	            if (action.type === 'LOGIN') {
+	                console.log("starting timer");
+	                setTimeout(function () {
+	                    console.log("attempting to log out");
+	                    store.dispatch({ type: "LOGOUT",
+	                        email: null
+	                    });
+	                }, action.jwtDuration);
 	            }
 	            next(action);
 	        };

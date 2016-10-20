@@ -128,8 +128,8 @@ export function saveProfileAction(user, jwt){
 }
 
 export function loginAction(email, password) {
+    console.log("TRYING TO LOGIN")
     return (dispatch) => {
-
         return fetch('/login', {
             method: 'post',
             headers: {
@@ -139,7 +139,6 @@ export function loginAction(email, password) {
             body: JSON.stringify({
                  username: email,
                  password: password
-
             })
         }).then(response => {
             console.log('got response');
@@ -151,10 +150,13 @@ export function loginAction(email, password) {
                 throw error
             }
         }).then(json => {  // {user: user, token: Base64String }
+            console.log("got login response")
             console.log(json); // evidently we have to extract the response like this to force/eval the promise/thin
             var parsed_json = JSON.parse(json)
+
             return dispatch(receivedAuthorization(parsed_json)) //transition to logged in state
         }).catch(err => {
+            console.log("An Error occured when logging in")
             console.log(err);
             // flash invalid login credential
         });
@@ -176,9 +178,11 @@ function checkStatus(response) {
 
 function receivedAuthorization(json) {
     return {
+        // type: "RECEIVED_JWT_AUTH",
         type: "LOGIN",
         user: json.user,
-        jwt: json.token
+        jwt: json.token,
+        jwtDuration: json.tokenDuration
     }
 }
 

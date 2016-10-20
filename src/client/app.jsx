@@ -22,6 +22,7 @@ import login from './reducers/login'
 import timerReducer from './reducers/timerReducer'
 
 import timerMiddleware from './middleware/timerMiddleware'
+import userMiddleware from './middleware/userMiddleware'
 
 import {
     loginAction, logoutAction, getMessage,
@@ -51,6 +52,7 @@ const reducer = combineReducers(reducers)
 
 let store = createStore(reducer,
                         applyMiddleware(timerMiddleware,
+                                        userMiddleware,
                                         thunk));
 
 
@@ -230,7 +232,11 @@ class Home extends React.Component {
                </div>
 
                <div style={styles.timeChart}>
-               <TimeChart chartData={this.props.chartData} store={store} />
+               
+               <TimeChart
+               chartData={this.props.chartData}
+               store={store}/>
+               
                </div>
 
                </div>

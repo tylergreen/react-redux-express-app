@@ -1,6 +1,7 @@
 var model = require('../model/models.js'),
     config = require('config'),
-    jwt = require('jsonwebtoken')
+    jwt = require('jsonwebtoken'),
+    ms = require('ms')
 
 module.exports.editProfile = function(req, res) {
                     // update profile in the DB
@@ -89,9 +90,15 @@ module.exports.login = function(req, res) {
     // partially apply jwt.sign into util or helper
     var secret = config.get("jwt-secret-key")
     var jwtExpiration = config.get("jwt-expiration")
+    var jwtExpirationMilliseconds = ms(jwtExpiration.expiresIn)
     var token = jwt.sign(profile,
                          secret,
                          jwtExpiration);
-    res.json({user: req.user, token: token})
+    console.log("jwtExpirationMilliseconds")
+    console.log(jwtExpirationMilliseconds)
+    res.json({user: req.user,
+              token: token,
+              tokenDuration: jwtExpirationMilliseconds
+             })
 }
 

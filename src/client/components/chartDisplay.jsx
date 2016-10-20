@@ -9,11 +9,16 @@ import { Link } from 'react-router'
 export default class extends Component{
 
     chartOptions(){
-        return {}
+        return {
+            scales:
+                {yAxes: [
+                    {type: 'logarithmic'}
+               ]}
+               }
     }
 
-       render(){
-               const styles = reactCSS({
+    render(){
+        const styles = reactCSS({
             'default': {
                 container: {
                     margin: '1em'
@@ -23,11 +28,14 @@ export default class extends Component{
 
         if(this.props.chartData != null){
             return <div style={styles.container}>
-                <BarChart data={this.props.chartData} options={this.chartOptions} width="300" height="250" />
+                <BarChart
+            data={this.props.chartData}
+            options={this.chartOptions()}
+            width="300" height="250"
+                />
                 </div>
         } else {
           return <div style={styles.container}>
-                 WAITING FOR CHART DATA
                  </div>
         }
      }

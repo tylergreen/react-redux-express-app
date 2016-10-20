@@ -18,6 +18,10 @@ module.exports.record = function(req, res) {
     })
 }
 
+function convert_ms_to_minutes(ms){
+    return (ms / 1000) / 60.0
+}
+
 module.exports.timings = function(req, res) {
     // get all timings with from user with label
     model.TimeRecord.findAll({
@@ -31,7 +35,7 @@ module.exports.timings = function(req, res) {
 
         var chartData = { labels: _.map(timings, (i) => i.startTime),
                           datasets: [{
-                              data: _.map(timings, (i) => i.duration),
+                              data: _.map(timings, (i) => convert_ms_to_minutes(i.duration)),
                               backgroundColor: 'rgb(255, 0, 0, 0.2)',
                               borderColor: 'rgb(0, 255, 0, 0.2)',
                               borderWidth: 3
