@@ -94,8 +94,6 @@ module.exports.login = function(req, res) {
     var token = jwt.sign(profile,
                          secret,
                          jwtExpiration);
-    console.log("jwtExpirationMilliseconds")
-    console.log(jwtExpirationMilliseconds)
     res.json({user: req.user,
               token: token,
               tokenDuration: jwtExpirationMilliseconds

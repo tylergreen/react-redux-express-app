@@ -45074,7 +45074,8 @@
 	        key: 'chartOptions',
 	        value: function chartOptions() {
 	            return {
-	                scales: { yAxes: [{ type: 'logarithmic' }] }
+	                scales: { yAxes: [{ type: 'logarithmic' }]
+	                }
 	            };
 	        }
 	    }, {
@@ -45082,21 +45083,45 @@
 	        value: function render() {
 	            var styles = (0, _reactcss2.default)({
 	                'default': {
-	                    container: {
-	                        margin: '1em'
-	                    }
+	                    outerContainer: {
+	                        display: 'flex',
+	                        flexFlow: 'row'
+
+	                    },
+	                    innerContainer: {
+	                        display: 'flex',
+	                        flexFlow: 'column',
+	                        alignContent: 'center',
+	                        alignItems: 'center'
+	                    },
+	                    yAxisLabel: {},
+	                    xAxisLabel: {}
 	                }
 	            });
 
 	            if (this.props.chartData != null) {
 	                return _react2.default.createElement(
 	                    'div',
-	                    { style: styles.container },
-	                    _react2.default.createElement(_reactChartjs.Bar, {
-	                        data: this.props.chartData,
-	                        options: this.chartOptions(),
-	                        width: '300', height: '250'
-	                    })
+	                    { style: styles.outerContainer },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { style: styles.yAxisLabel },
+	                        'Duration (minutes)'
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { style: styles.innerContainer },
+	                        _react2.default.createElement(_reactChartjs.Bar, {
+	                            data: this.props.chartData,
+	                            options: this.chartOptions(),
+	                            width: '300', height: '250'
+	                        }),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { style: styles.xAxisLabel },
+	                            'Date of Recording and Start Time'
+	                        )
+	                    )
 	                );
 	            } else {
 	                return _react2.default.createElement('div', { style: styles.container });

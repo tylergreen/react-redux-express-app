@@ -22,6 +22,10 @@ function convert_ms_to_minutes(ms){
     return (ms / 1000) / 60.0
 }
 
+function format_labels(timings){
+    return _.map(timings, (i) => i.startTime.toLocaleString()) 
+}
+
 module.exports.timings = function(req, res) {
     // get all timings with from user with label
     model.TimeRecord.findAll({
@@ -33,7 +37,7 @@ module.exports.timings = function(req, res) {
         console.log("timings")
         console.log(timings)
 
-        var chartData = { labels: _.map(timings, (i) => i.startTime),
+        var chartData = { labels: format_labels(timings),
                           datasets: [{
                               data: _.map(timings, (i) => convert_ms_to_minutes(i.duration)),
                               backgroundColor: 'rgb(255, 0, 0, 0.2)',
@@ -48,3 +52,4 @@ module.exports.timings = function(req, res) {
     }
            )
 }
+
