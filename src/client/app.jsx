@@ -1,15 +1,12 @@
-import Paper from 'paper'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 import { Provider, connect } from 'react-redux'
 import thunk from 'redux-thunk'
 
-
 import fetch from 'fetch-ponyfill'
 import reactCSS from 'reactcss'
 import CSSModules from 'react-css-modules'
-
 
 import {MySlider} from './components/mySlider.jsx'
 import OrigSlider from './components/origSlider.jsx'
@@ -55,68 +52,9 @@ let store = createStore(reducer,
                                         userMiddleware,
                                         thunk));
 
-
-class UserProfileForm extends React.Component {
-    constructor() {
-        super()
-        
-        this.submit = this.submit.bind(this) // react es6 doesn't auto bind methods to itself
-    }
-
-    render() {
-        let firstName
-        let lastName
-        let userName
-        let email
-        console.log("USER is")
-        console.log(this.props.user)
-                
-        return <div>
-            <div>
-            User Name: { this.props.user.userName }
-        </div>
-            <div>
-            First Name: { this.props.user.firstName }
-            <input type="text"
-        ref={(c) => firstName = c}
-            ></input>
-
-        </div>
-            <div>
-            Last Name: { this.props.user.lastName }
-
-            <input type="text"
-        ref={(c) => lastName = c}
-            ></input>
-
-        </div>
-            <div>
-            Email: { this.props.user.email }
-
-            <input type="email"
-        ref={(c) => email= c}
-            ></input>
-
-        </div>
-
-            <button onClick={this.submit(firstName, lastName, userName, email)}>Save Changes</button>
-            
-            <LogoutButton> </LogoutButton>
-            </div>
-    }
-    // could refactor this to take 1 arg instead of 4
-    submit(firstName, lastName, userName, email) {
-        store.dispatch(saveProfileAction(
-            { firstName: firstName,
-              lastName: lastName,
-              email: email,
-              userName: userName},
-            store.getState().jwt)) 
-    }
-}
-
-
+// this needs to be redone
 class LogoutButton extends React.Component {
+
     render() {
         return <button onClick={this.logOut}> Logout </button>
     }
@@ -131,75 +69,23 @@ class LogoutButton extends React.Component {
     }
 }
 
-class Target extends React.Component {
-    render() {
-        return <canvas id={this.props.name}></canvas> ;
-    }
-
-    componentDidMount() {
-        this.drawPaperCircle();
-    }
-    componentDidUpdate() {
-        this.drawPaperCircle();
-    }
-           
-    drawPaperCircle() {
-        console.log("printing this");
-        console.log(this);
-        let canvas = document.getElementById(this.props.name);
-        
-        Paper.setup(canvas); // 
-
-        let path = new Paper.Path();
-
-        let myCircle = new Paper.Path.Circle(new Paper.Point(parseInt(this.props.x), this.props.y), this.props.size);
-        myCircle.style = {
-            fillColor: this.color(this.props.userAuthenticated),
-            strokeColor: 'black',
-            strokeWidth: 10,
-        }
-        
-        Paper.view.draw();
-        console.log("successu ")
-    }
-
-    color(isLoggedIn) {
-        if(isLoggedIn){
-            return 'green'
-        }
-        else {
-            return 'red'
-        }
-    }
-}
-
-class TodoList extends React.Component {
-    render() {
-        return <div>
-            <input type="Text"></input>
-            <button>Add</button>
-            <ItemList> </ItemList>
-            </div>
-    }
-}
-
-class TodoItem extends React.Component {
-    render() {
-            <div>
-            {this.props.text} 
-            <button> remove </button>
-            </div>
-    }
-}
-
-
 class Home extends React.Component {
+    render(){
+        if(this.props.userAuthenticated){
+            return <AuthenticatedDashboard />
+        } else {
+            return <UnAuthenticatedDashboard />
+        }
+    }
+}
+
+class AuthenticatedDashboard extends React.Component {
     render(){
         const styles = reactCSS({
             'default': {
                 container: {
                     display: 'flex',
-                    justifyContent: 'space-between',
+                    justifyContent: 'space-around',
                     alignItems: 'center',
                     alignContent: 'center'
                 },
@@ -219,45 +105,65 @@ class Home extends React.Component {
                 }
             }
         })
-        return(<div>
-               
-               <AuthenticationBar authorizationStatus={this.props.userAuthenticated}
-               user={this.props.user}
-               store={store} />
 
-               <div style={styles.container}>
+        return <div style={styles.container}>
+                        
+        <div> Welcome {this.props.user.firstName} ! {this.props.user.email}
+        <Link to="/profile">Edit profile</Link>
+                </div>
+            
+                <div style={styles.timer}>
+                    <ActiveTimer handleSubmit={recordTimer} />
+                </div>
 
-               <div style={styles.timer}>
-               <ActiveTimer handleSubmit={recordTimer} />
-               </div>
+                <div style={styles.timeChart}>
+                    <TimeChart
+                        chartData={this.props.chartData}
+                        store={store}/>
+                </div>
+        </div>
+    }
+}
 
-               <div style={styles.timeChart}>
-               
-               <TimeChart
-               chartData={this.props.chartData}
-               store={store}/>
-               
-               </div>
 
-               </div>
+class UnAuthenticatedDashboard extends React.Component {
+    render() {
+        const styles = reactCSS({
+            'default': {
+                container: {
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    alignContent: 'center',
+                },
+                h1: {
+                    color: '#FFF',
+                    fontSize: '3em'
+                },
+                links: {
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    margin: '1em'
+                },
+                timer: {
+                    display: 'flex',
+                    justifyContent: 'center',
+                    margin: '3em',
+                    width: '100%'
+                }
+            }
+        })
 
-               <div style={styles.links} >
-                 <Link to="/timer">Timer</Link>
-               <Link to="/slider">Slider</Link>
-
-               </div>
-               
-               
-               </div>
-              )
+        return <div style={styles.container}>
+            <div style={styles.timer}>
+                    <ActiveTimer
+                        handleSubmit={recordTimer} />
+                </div>
+        </div>
     }
 }
 
 const mapStateToProps = (state) => {
-    console.log("state is...")
-    console.log(state)
-    console.log("user is...")
-    console.log(state.login.user)
     return {
         userAuthenticated: state.login.isLoggedIn,
         user: state.login.user,
@@ -271,9 +177,16 @@ var ActiveHome = connect(
     mapStateToProps
 )(Home)
 
+var ActiveTopBar = connect(
+    (state) => {
+        return {
+            authenticated: state.login.isLoggedIn,
+        }
+    }
+)(TopBar)
 
 
-function format_ms(milliseconds){
+function time_display_string(milliseconds){
     var count = milliseconds
     var seconds = Math.floor(count / 1000.0) % 60
     var minutes = Math.floor(count / 60000.0) % 60
@@ -292,7 +205,7 @@ class Timer extends React.Component {
     startTimeStamp(){
         if(this.props.originalTimeStamp){
             var date = new Date(this.props.originalTimeStamp)
-            return `${date.toDateString()} ${date.toTimeString()}`
+            return `Start Time: ${date.toDateString()} ${date.toTimeString()}`
         }
         else
             return ""
@@ -305,18 +218,27 @@ class Timer extends React.Component {
                     display: 'flex',
                     flexFlow: 'column',
                     justifyContent: 'center',
-                    alignItems: 'left',
-                    width: '60%'
-                    
+                    alignItems: 'center',
+                    width: '50%',
+                },
+                h1: {
+                    margin: '1em'
+                },
+                timeStamp: {
+                    height: '1.5em'
                 }
             }
         })
+
         return <div style={styles.timer}>
-            <h1>Timer</h1>
-            <TimerLabel/>
-            <div>Start Time: {this.startTimeStamp() } </div>
-            <TimerDisplay elapsed={format_ms(this.props.elapsed)}/>
+                <h1 style={styles.h1}>Timer</h1>
+                <TimerLabel/>
+                <div style={styles.timeStamp}> { this.startTimeStamp() } </div>
+            
+            <TimerDisplay elapsed={time_display_string(this.props.elapsed)}/>
+            
             <TimerControl timer_state={this.props.timer_state} label ={ this.props.label }/>
+            
             <LapDisplay lapTimes={this.props.lapTimes}/>
           </div>
     }
@@ -326,13 +248,13 @@ class LapDisplay extends React.Component {
     render(){
         if(this.props.lapTimes.length > 0){
             return <div>
-                Lap Times 
-            <ol>
-            {this.props.lapTimes.map((lap) => {
-                return <li key={lap}> {format_ms(lap)} </li>
-            })}
-            </ol>
-                </div>
+              Lap Times 
+              <ol>
+                  {this.props.lapTimes.map((lap) => {
+                       return <li key={lap}> {time_display_string(lap)} </li>
+                   })}
+              </ol>
+            </div>
         }
         else
             return <div></div>
@@ -345,9 +267,18 @@ class TimerLabel extends React.Component {
     }
     
     render(){
-        return <div>
-            Timer Label: <input type="text" onChange={this.handleChange} ></input>
-            </div>
+        const styles = reactCSS({
+            'default': {
+                container: {
+                    margin: '1em'
+                }
+            }
+        })
+        
+        return <div style={styles.container}>
+                Timer Label:  <input
+                                  type="text" onChange={this.handleChange} />
+        </div>
     }
 }
 
@@ -378,7 +309,7 @@ class TimerControl extends React.Component {
             'default': {
                 container: {
                     display: 'flex',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
                 }}})
         
         if(this.isReady()){
@@ -541,9 +472,6 @@ class RecordsDisplay extends React.Component {
         return <button
         onClick={this.getTimings}> GET TIMINGS </button>
     }
-
-
-
 }
 
 /// end TIMER
@@ -571,7 +499,7 @@ class Profile extends React.Component {
 ReactDOM.render(
         <Provider store={store} >
         <div>
-        <TopBar/>
+        <ActiveTopBar/>
         <Router history={browserHistory} >
         <Route path="/" component={ActiveHome} />
         <Route path="slider" component={OrigSlider} />

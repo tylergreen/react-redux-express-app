@@ -15,17 +15,11 @@ export default class extends Component{
                 }
             }
         })
-
-        if(this.props.authorizationStatus){
-            return <div> Welcome {this.props.user.firstName} ! {this.props.user.email}
-                <Link to="/profile">Edit profile</Link>
+        
+        return <div style={styles.container}>
+            <Registration store={this.props.store}/>
+            <LoginForm store={this.props.store}/>
             </div>
-        } else {
-            return <div style={styles.container}>
-                <Registration store={this.props.store}/>
-                <LoginForm store={this.props.store}/>
-                </div>
-        }
     }
 }
     

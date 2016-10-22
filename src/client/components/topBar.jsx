@@ -14,15 +14,38 @@ export default class extends Component{
                 },
                 h1: {
                     color: '#FFF',
-                    fontSize: '3em'
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: '2em',
+                },
+                leftSide: {
+                    display: 'flex',
+                    flexFlow: 'row'
                 }
             }
         })
 
-       return <div style={styles.container}>
-                    <Logo/>
-                    <h1 style={styles.h1}> Habit Hookup! </h1>
-                    <Logo/>
-            </div>
+        return <div style={styles.container}>
+    <div style={styles.leftSide}>
+        <Logo/>
+        <div style={styles.h1}> Habit Hookup! </div>
+    </div>
+                    <UserControlButtons authenticated={this.props.authenticated}/>
+       </div>
     }
+}
+
+class UserControlButtons extends React.Component {
+    render(){
+        if(this.props.authenticated){
+            return <div>
+                <button>Log In</button>
+                <button>Join</button>
+            </div>
+
+        } else {
+            return <div> User profile link/DD </div>
+        }
+    }
+    
 }

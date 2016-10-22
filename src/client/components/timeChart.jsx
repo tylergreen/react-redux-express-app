@@ -42,27 +42,24 @@ export default class extends Component{
                    }
                }
            })
-           
-           return <div>
-               <div style={styles.container}>
-               
-           Search times by Label:
+
+           return <div style={styles.container}>
+    
+               Search times by Label:
            
                <input
-           type="text"
-           style={styles.textInput }
-           onChange={this.handleChange} />
+                   type="text"
+                   style={styles.textInput }
+                   onChange={this.handleChange} />
 
                <button
-           style={ButtonStyles.button}
-           onClick={this.search}>
-               Search Timings Database
-           </button>
-               
-            </div>
+                   style={ButtonStyles.button}
+                   onClick={this.search}>
+                   Search Timings Database
+               </button>
                
                <div style={styles.chart}>
-               <ChartDisplay chartData={this.props.chartData}/>
+                   <ChartDisplay chartData={this.props.chartData}/>
                </div>
 
            </div>
