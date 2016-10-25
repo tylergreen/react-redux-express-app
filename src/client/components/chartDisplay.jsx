@@ -2,7 +2,6 @@ import React, { PropTypes, Component } from 'react'
 import reactCSS from 'reactcss'
 import { Bar as BarChart } from 'react-chartjs'
 import Registration from './registration.jsx'
-import LoginForm from './loginForm.jsx'
 import { Link } from 'react-router'
 
 export default class extends Component{

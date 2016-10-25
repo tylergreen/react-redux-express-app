@@ -11,6 +11,7 @@ import CSSModules from 'react-css-modules'
 import {MySlider} from './components/mySlider.jsx'
 import OrigSlider from './components/origSlider.jsx'
 import TimeChart from './components/timeChart.jsx'
+import LoginBar from './components/loginBar.jsx'
 
 import AuthenticationBar from './components/authenticationBar.jsx'
 import TopBar from './components/topBar.jsx'
@@ -150,16 +151,23 @@ class UnAuthenticatedDashboard extends React.Component {
                     justifyContent: 'center',
                     margin: '3em',
                     width: '100%'
+                },
+                loginBar: {
+                    display: 'flex',
+                    alignItems: 'left',
+                    width: '100%',
                 }
             }
         })
 
-        return <div style={styles.container}>
-            <div style={styles.timer}>
+        return (
+            <div style={styles.container}>
+                <div style={styles.timer}>
                     <ActiveTimer
                         handleSubmit={recordTimer} />
                 </div>
-        </div>
+            </div>
+            )
     }
 }
 
@@ -205,7 +213,7 @@ class Timer extends React.Component {
     startTimeStamp(){
         if(this.props.originalTimeStamp){
             var date = new Date(this.props.originalTimeStamp)
-            return `Start Time: ${date.toDateString()} ${date.toTimeString()}`
+            return `Start Time: ${date.toDateString()} ${date.toTimeString().slice(0,8)}`
         }
         else
             return ""
@@ -214,40 +222,66 @@ class Timer extends React.Component {
     render() {
         const styles = reactCSS({
             'default': {
-                timer: {
+                outerContainer: {
                     display: 'flex',
                     flexFlow: 'column',
-                    justifyContent: 'center',
                     alignItems: 'center',
-                    width: '50%',
+                    width: '100%'
+                },
+                container: {
+                    display: 'flex',
+                    flexFlow: 'column',
+                    alignItems: 'center',
+                    width: '100%'
+                },
+                timerInfo: {
+                    display: 'flex',
+                    flexFlow: 'column',
+                    alignItems: 'left',
                 },
                 h1: {
-                    margin: '1em'
+                    marginBottom: '1em'
                 },
                 timeStamp: {
-                    height: '1.5em'
+                    height: '1.5em',
+                    fontSize: '1.2em'
                 }
             }
         })
 
-        return <div style={styles.timer}>
-                <h1 style={styles.h1}>Timer</h1>
-                <TimerLabel/>
-                <div style={styles.timeStamp}> { this.startTimeStamp() } </div>
+        return (
+            <div style={styles.outerContainer}>
+                <div style={styles.container}>
+                    <h1 style={styles.h1}>Timer</h1>
+                    
+                    <div style={styles.timerInfo}>
+                        <TimerLabel/>
+                        <div style={styles.timeStamp}>
+                            { this.startTimeStamp() }
+                        </div>
+                        <TimerDisplay elapsed={time_display_string(this.props.elapsed)}/>
+                    </div>
+                </div>
             
-            <TimerDisplay elapsed={time_display_string(this.props.elapsed)}/>
-            
-            <TimerControl timer_state={this.props.timer_state} label ={ this.props.label }/>
-            
-            <LapDisplay lapTimes={this.props.lapTimes}/>
-          </div>
+                <TimerControl timer_state={this.props.timer_state} label ={ this.props.label }/>
+                    
+                <LapDisplay lapTimes={this.props.lapTimes}/>
+            </div>
+        )
     }
 }
 
 class LapDisplay extends React.Component {
     render(){
+        const styles = reactCSS({
+            'default': {
+                container: {
+                    fontSize: '1.2em'
+                }}
+            })
+            
         if(this.props.lapTimes.length > 0){
-            return <div>
+            return <div style={styles.container}>
               Lap Times 
               <ol>
                   {this.props.lapTimes.map((lap) => {
@@ -270,14 +304,20 @@ class TimerLabel extends React.Component {
         const styles = reactCSS({
             'default': {
                 container: {
-                    margin: '1em'
+                    display: 'flex',
+                    flexFlow: 'row',
+                    fontSize: '1.2em'
+                },
+                input: {
+                    marginLeft: '1em',
+                    width: '60%'
                 }
             }
         })
         
         return <div style={styles.container}>
-                Timer Label:  <input
-                                  type="text" onChange={this.handleChange} />
+                Timer Label:  <input style={styles.input}
+                                     type="text" onChange={this.handleChange} />
         </div>
     }
 }
@@ -288,9 +328,9 @@ class TimerDisplay extends React.Component {
             'default': {
                 display: {
                     fontSize: '5em',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    margin: '0.5em'
+                        marginTop: '40px',
+                    marginBottom: '20px'
+
                 }}})
 
         return <div style={styles.display}>
@@ -310,6 +350,8 @@ class TimerControl extends React.Component {
                 container: {
                     display: 'flex',
                     justifyContent: 'center',
+                    width: '100%',
+                    margin: '2em'
                 }}})
         
         if(this.isReady()){
@@ -321,10 +363,10 @@ class TimerControl extends React.Component {
                 </div>
         } else if (this.isStopped()) {
             return <div style={styles.container}>
-                <ResumeButton/>
-                <RecordButton/>
-                <ResetButton/>
-                </div>
+                    <ResumeButton/>
+                    <RecordButton/>
+                    <ResetButton/>
+            </div>
         }
         
         else {
@@ -490,24 +532,18 @@ function requireAuth(nextState, replace) {
     }
 }
 
-class Profile extends React.Component {
-    render(){
-        return <UserProfileForm user={store.getState().login.user} />
-    }
-}
-
 ReactDOM.render(
-        <Provider store={store} >
+    <Provider store={store} >
         <div>
-        <ActiveTopBar/>
-        <Router history={browserHistory} >
-        <Route path="/" component={ActiveHome} />
-        <Route path="slider" component={OrigSlider} />
-        <Route path="profile" component={Profile} onEnter={requireAuth} />
-        <Route path="timer" component={ActiveTimer} />
-        </Router>
+            <ActiveTopBar/>
+            <Router history={browserHistory} >
+                <Route path="/" component={ActiveHome} />
+                <Route path="slider" component={OrigSlider} />
+                <Route path="timer" component={ActiveTimer} />
+            </Router>
+            
         </div>
-        </Provider>,
+    </Provider>,
     document.getElementById('content')
 )
 

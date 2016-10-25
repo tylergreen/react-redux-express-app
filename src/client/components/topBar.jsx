@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react'
 import reactCSS from 'reactcss'
 import Logo from './logo.jsx'
+import LoginBar from './loginBar.jsx'
 
 export default class extends Component{
     render(){
@@ -37,15 +38,12 @@ export default class extends Component{
 
 class UserControlButtons extends React.Component {
     render(){
-        if(this.props.authenticated){
-            return <div>
-                <button>Log In</button>
-                <button>Join</button>
-            </div>
-
+        if(!this.props.authenticated){
+            return (
+                <LoginBar store={this.props.store}/>
+            )
         } else {
             return <div> User profile link/DD </div>
         }
     }
-    
 }
