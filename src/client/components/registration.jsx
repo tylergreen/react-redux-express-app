@@ -1,57 +1,82 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { connect } from 'react-redux'
 import reactCSS from 'reactcss'
 import { registerAction } from '../actions/index'
 import ButtonStyles from './styles/buttonStyles'
+import TopBar from './topBar.jsx'
+import AuthenticatedDashboard from './authenticatedDashboard.jsx'
 
-export default class Registration extends React.Component {
-    constructor() {
-        super()
-        
-        this.register = this.register.bind(this) // react es6 doesn't auto bind methods to itself
+const Registration = ({onRegisterClick, userAuthenticated}) => {
+    var email_input,
+        password_input
+
+    if(userAuthenticated){
+        return <AuthenticatedDashboard/>
     }
-
-    render(){
-        const styles = reactCSS({
-            'default': {
-                registration: {
-                    display: 'flex',
-                    flexFlow: 'column'
-                }
-            }
-        })
-      
-        return (<div style={styles.registration}>
+    else {
+        return (
+            <div>
+            <TopBar/>
                 
-                <h1>Register now!</h1>
+            <div style={styles.registration}>
+                
+                <h1 style={styles.h1}>Register now!</h1>
                 Email:
                 <input
-                type="email"
-                name="email"
-                ref={(c) => this.email_input = c}
+                    style={styles.input}
+                    type="email"
+                    name="email"
+                    ref={(c) => email_input = c}
                 />
                 Password:
                 <input
-                type="password"
-                name="password"
-                ref={(c) => this.password_input = c}
+                    style={styles.input}
+                    type="password"
+                    name="password"
+                    ref={(c) => password_input = c}
                 />
                 
-                <button style={ButtonStyles.button} onClick={this.register}>
-                Sign Up!
+                <button style={ButtonStyles.button}
+                        onClick={ () => onRegisterClick(email_input.value, password_input.value) }>
+                    Sign Up!
                 </button>
                 
-                </div>
+                <div> Already a member?  Sign in now </div>
+            </div>
+            </div>
         )
     }
+}
 
-    register(){
-        let email = ReactDOM.findDOMNode(this.email_input).value
-        let password =
-            ReactDOM.findDOMNode(this.password_input).value
-        this.props.store.dispatch(registerAction(email, password))
+const styles = reactCSS({
+    'default': {
+        registration: {
+            display: 'flex',
+            flexFlow: 'column',
+            alignItems: 'center',
+            margin: '1em'
+        },
+        input: {
+            width: '20em'
+        },
+        h1: {
+            margin: '1em'
+        }
+    }
+})
 
+const mapStateToProps = (state) => {
+    return {
+        userAuthenticated: state.login.isLoggedIn
     }
 }
 
 
+const ActiveRegistration = connect(
+    mapStateToProps,
+    {onRegisterClick: registerAction}
+)(Registration)
+
+
+export default ActiveRegistration

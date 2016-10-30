@@ -66,17 +66,20 @@ module.exports.signup = function(req, res) {
             email: user.email,
         }
         
-        // refactor into util or helper
-        var secret = config.get("jwt-secret-key")
-        var jwtExpiration = config.get("jwt-expiration")
-        var token = jwt.sign(server_profile, secret, jwtExpiration);
-            res.json({user: client_profile, token: token})
+        // refactor into util or helper bc duplicated with login method
+            var secret = config.get("jwt-secret-key")
+            var jwtExpiration = config.get("jwt-expiration")
+            var jwtExpirationMilliseconds = ms(jwtExpiration.expiresIn)
+            var token = jwt.sign(server_profile,
+                                 secret,
+                                 jwtExpiration);
+            res.json({user: client_profile,
+                      token: token,
+                      tokenDuration: jwtExpirationMilliseconds
+                     })
         }
     })
 }
-
-
-
 
 module.exports.login = function(req, res) {
 

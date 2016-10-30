@@ -2,8 +2,9 @@ import React, { PropTypes, Component } from 'react'
 import reactCSS from 'reactcss'
 import Logo from './logo.jsx'
 import LoginBar from './loginBar.jsx'
+import { connect } from 'react-redux'
 
-export default class extends Component{
+class TopBar extends Component{
     render(){
         const styles = reactCSS({
             'default': {
@@ -47,3 +48,14 @@ class UserControlButtons extends React.Component {
         }
     }
 }
+
+const ActiveTopBar = connect(
+    (state) => {
+        return {
+            authenticated: state.login.isLoggedIn,
+        }
+    }
+)(TopBar)
+
+
+export default ActiveTopBar

@@ -15,7 +15,8 @@ export default class LoginForm extends React.Component {
         const styles = reactCSS({
             'default': {
                 signIn: {
-                    color: 'white'
+                    color: 'white',
+                    textDecoration: 'none',
                 },
                 input: {
                     height: '2em',
@@ -25,14 +26,15 @@ export default class LoginForm extends React.Component {
       
         return (
             <div>
-            <Link style={styles.signIn}
-                  to={'/SignIn'}>
-                Sign In
-            </Link>                  
-            <button style={ButtonStyles.button} onClick={this.signUp}>
-            Sign Up
-           </button>
-                </div>
+                <Link style={styles.signIn}
+                      to={'login'}>
+                    Sign In
+                </Link>                  
+                <button style={ButtonStyles.button}>
+                    <Link style={styles.signIn}
+                          to={'signUp'}> Sign Up </Link>
+                </button>
+            </div>
         )
     }
 

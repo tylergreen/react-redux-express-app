@@ -17,8 +17,8 @@ export default class extends Component{
         })
         
         return <div style={styles.container}>
-            <Registration store={this.props.store}/>
-            <LoginForm store={this.props.store}/>
+            <Registration />
+            <LoginForm />
             </div>
     }
 }
