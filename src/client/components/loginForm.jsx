@@ -17,7 +17,6 @@ const LoginForm = ({onLoginClick, userAuthenticated}) => {
         return <AuthenticatedDashboard/>
     }
     else {
-        console.log('not authenticated')
         return (
             <div>
                 <TopBar/>
@@ -72,8 +71,6 @@ const styles = reactCSS({
 })
 
 const mapStateToProps = (state) => {
-    console.log('state is')
-    console.log(state)
     return {
         userAuthenticated: state.login.isLoggedIn
     }

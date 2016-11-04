@@ -4,39 +4,23 @@ import { createStore, applyMiddleware, combineReducers } from 'redux'
 import { Provider, connect } from 'react-redux'
 import thunk from 'redux-thunk'
 
-import fetch from 'fetch-ponyfill'
+import './components/globalStyles.less'
 import reactCSS from 'reactcss'
 import CSSModules from 'react-css-modules'
 
-import {MySlider} from './components/mySlider.jsx'
-import OrigSlider from './components/origSlider.jsx'
-import TimeChart from './components/timeChart.jsx'
-import Timer from './components/timer.jsx'
-import LoginBar from './components/loginBar.jsx'
+import Timer from './components/timer/timer.jsx'
 import LoginForm from './components/loginForm.jsx'
 import Registration from './components/registration.jsx'
 
-import AuthenticationBar from './components/authenticationBar.jsx'
+import AuthenticatedDashboard from './components/authenticatedDashboard.jsx'
 import TopBar from './components/topBar.jsx'
+import UserProfileForm from './components/userProfileForm.jsx'
 
 import login from './reducers/login'
 import timerReducer from './reducers/timerReducer'
 
 import timerMiddleware from './middleware/timerMiddleware'
 import userMiddleware from './middleware/userMiddleware'
-
-import {
-    loginAction, logoutAction, getMessage,
-    saveProfileAction, 
-    startTimer,
-    stopTimer,
-    resumeTimer,
-    resetTimer,
-    recordTimer,
-    updateLabel ,
-    lapTimerAction,
-    getTimings
-} from './actions/index'
 
 import { Router,
          Route,
@@ -55,27 +39,14 @@ const reducers =  {
 
 const reducer = combineReducers(reducers)
 
+// only for temp debugging -- figure out how to toggle for dev/prod
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 let store = createStore(reducer,
+                        composeEnhancers(
                         applyMiddleware(timerMiddleware,
                                         userMiddleware,
-                                        thunk));
-
-// this needs to be redone
-class LogoutButton extends React.Component {
-
-    render() {
-        return <button onClick={this.logOut}> Logout </button>
-    }
-
-    logOut() {
-        console.log("Logging Out Bye Tyler!")
-        console.log("Store state:")
-        console.log(store.getState())
-        store.dispatch(logoutAction("monkey@gmail")) // change this to expire the JWT
-        console.log("updated state:")
-        console.log(store.getState())
-    }
-}
+                                        thunk)))
 
 class Home extends React.Component {
     render(){
@@ -95,7 +66,6 @@ class UnAuthenticatedDashboard extends React.Component {
             'default': {
                 container: {
                     display: 'flex',
-                    justifyContent: 'space-around',
                     alignItems: 'center',
                     alignContent: 'center'
                 },
@@ -110,14 +80,15 @@ class UnAuthenticatedDashboard extends React.Component {
                 },
                 timer: {
                     display: 'flex',
+                    flexFlow: 'column',
                     justifyContent: 'center',
+                    alignItems: 'center',
                     margin: '3em',
                     width: '100%'
                 },
-                loginBar: {
-                    display: 'flex',
-                    alignItems: 'left',
-                    width: '100%',
+                title: {
+                    fontSize: '2em',
+                    marginBottom: '1em'
                 }
             }
         })
@@ -127,8 +98,10 @@ class UnAuthenticatedDashboard extends React.Component {
                 <TopBar/>
                 <div style={styles.container}>
                     <div style={styles.timer}>
-                        <Timer
-                            handleSubmit={recordTimer} />
+                        <h1 style={styles.title}>
+                            Timer
+                        </h1> 
+                        <Timer/>
                     </div>
                 </div>
             </div>
@@ -168,7 +141,7 @@ ReactDOM.render(
             <Route path="login" component={LoginForm} />
             <Route path="signUp" component={Registration} />
             
-            <Route path="slider" component={OrigSlider} />
+            <Route path="profile" component={UserProfileForm} />
             <Route path="timer" component={Timer} />
         </Router>
     </Provider>,

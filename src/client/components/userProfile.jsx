@@ -38,8 +38,6 @@ class UserProfileForm extends React.Component {
                 </div>
 
                 <button onClick={this.submit(firstName, lastName, userName, email)}>Save Changes</button>
-            
-                <LogoutButton> </LogoutButton>
         </div>
     }
     // could refactor this to take 1 arg instead of 4

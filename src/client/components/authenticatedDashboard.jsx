@@ -1,33 +1,27 @@
 import React from 'react'
 import reactCSS from 'reactcss'
-import Timer from './timer.jsx'
+import Timer from './timer/timer.jsx'
 import TopBar from './topBar.jsx'
 import { Link } from 'react-router'
 import { recordTimer } from '../actions/index'
 import TimeChart from './timeChart.jsx'
 
-const AuthenticatedDashboard = ({chartData}) => {
+const AuthenticatedDashboard = ({}) => {
     return (
         <div>
             <TopBar/>
-            <div> Welcome guy ! buddy
-                <Link to="/profile">Edit profile</Link>
-    
-                <div style={styles.container}>
-                        
-                    </div>
             
-                    <div style={styles.timer}>
-                        <Timer handleSubmit={recordTimer} />
-                    </div>
+            <div style={styles.container}>
+                <div style={styles.timer}>
+                    <Timer
+                        handleSubmit={recordTimer} />
+                </div>
                     
-                    <div style={styles.timeChart}>
-                        <TimeChart
-                            chartData={chartData}
-                            />
-                    </div>
+                <div style={styles.timeChart}>
+                    <TimeChart />
                 </div>
             </div>
+        </div>
     )
 }
 
@@ -36,8 +30,9 @@ const styles = reactCSS({
         container: {
             display: 'flex',
             justifyContent: 'space-around',
-            alignItems: 'center',
-            alignContent: 'center'
+            alignItems: 'flex-start',
+            alignContent: 'center',
+            margin: '3em'
         },
         h1: {
             color: '#FFF',
@@ -50,8 +45,7 @@ const styles = reactCSS({
         },
         timer: {
             display: 'flex',
-            justifyContent: 'center',
-            margin: '3em'
+            justifyContent: 'center'
         }
     }
 })

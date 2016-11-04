@@ -1,4 +1,4 @@
-import './demo.less';
+// import './demo.less';
 
 import React, { Component } from 'react';
 import Slider from 'react-rangeslider';

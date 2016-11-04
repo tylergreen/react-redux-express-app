@@ -1,54 +1,86 @@
-class UserProfileForm extends React.Component {
-    constructor() {
-        super()
-        
-        this.submit = this.submit.bind(this) // react es6 doesn't auto bind methods to itself
-    }
+import reactCSS from 'reactcss'
+import Logo from './logo.jsx'
+import LoginBar from './loginBar.jsx'
+import TopBar from './topBar.jsx'
+import { connect } from 'react-redux'
+import { Link } from 'react-router'
+import { saveProfileAction } from '../actions/index'
 
-    render() {
-        let firstName
-        let lastName
-        let userName
-        let email
-        console.log("USER is")
-        console.log(this.props.user)
-                
-        return <div>
+const UserProfileForm = ({user}) => {
+    
+    var firstName,
+        lastName,
+        userName,
+        email
+
+    return (
+        <div>
+            <TopBar/>
+            <div style={styles.container}>
                 <div>
-                    User Name: { this.props.user.userName }
-                </div>
-                <div>
-                    First Name: { this.props.user.firstName }
+                    First Name: { user.firstName }
                     <input type="text"
                            ref={(c) => firstName = c} />
                 </div>
                 
                 <div>
-                    Last Name: { this.props.user.lastName }
-
+                    Last Name: { user.lastName }
+                    
                     <input type="text"
                            ref={(c) => lastName = c} />
                 </div>
+                
                 <div>
-                    Email: { this.props.user.email }
+                    Email: { user.email }
 
                     <input type="email"
-                           ref={(c) => email= c}
+                           ref={(c) => email = c}
                     />
                 </div>
 
-                <button onClick={this.submit(firstName, lastName, userName, email)}>Save Changes</button>
-            
-                <LogoutButton> </LogoutButton>
+                <button onClick={ () => saveProfileClick(firstName.value, lastName.value, email.value)}>Save Changes</button>
+
+                <Link to="/">Back to Dashboard</Link>
+            </div>
         </div>
+    )
+}
+
+const styles = reactCSS({
+    'default': {
+        container: {
+            display: 'flex',
+            flexFlow: 'column',
+            alignItems: 'center'
+        },
+        h1: {
+            color: '#FFF',
+            fontSize: '3em'
+        },
+        links: {
+            display: 'flex',
+            justifyContent: 'space-around',
+            margin: '1em'
+        },
+        timer: {
+            display: 'flex',
+            justifyContent: 'center',
+        }
     }
-    // could refactor this to take 1 arg instead of 4
-    submit(firstName, lastName, userName, email) {
-        store.dispatch(saveProfileAction(
-            { firstName: firstName,
-              lastName: lastName,
-              email: email,
-              userName: userName},
-            store.getState().jwt)) 
+})
+
+
+const mapStateToProps = (state) => {
+    console.log("state is")
+    console.log(state)
+    return {
+        user: state.user
     }
 }
+
+const ActiveUserProfileForm = connect(
+    mapStateToProps,
+    {saveProfileClick: saveProfileAction}
+)(UserProfileForm)
+
+export default ActiveUserProfileForm

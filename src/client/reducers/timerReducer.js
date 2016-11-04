@@ -55,7 +55,8 @@ const timerReducer = (state=initialState, action) => {
         })
     case 'LAP_TIMER':
         return Object.assign({}, state, {
-            lapTimes: _.concat(state.lapTimes, action.lapTime - state.startTime + state.total_elapsed),
+            lapTimes: _.concat(state.lapTimes,
+                               action.lapTime - state.startTime + state.total_elapsed),
         })
     case 'TICK':
         return Object.assign({}, state, {

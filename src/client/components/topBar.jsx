@@ -3,36 +3,17 @@ import reactCSS from 'reactcss'
 import Logo from './logo.jsx'
 import LoginBar from './loginBar.jsx'
 import { connect } from 'react-redux'
+import { Link } from 'react-router'
 
 class TopBar extends Component{
     render(){
-        const styles = reactCSS({
-            'default': {
-                container: {
-                    background: 'green',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                },
-                h1: {
-                    color: '#FFF',
-                    display: 'flex',
-                    alignItems: 'center',
-                    fontSize: '2em',
-                },
-                leftSide: {
-                    display: 'flex',
-                    flexFlow: 'row'
-                }
-            }
-        })
 
         return <div style={styles.container}>
     <div style={styles.leftSide}>
         <Logo/>
         <div style={styles.h1}> Habit Hookup! </div>
     </div>
-                    <UserControlButtons authenticated={this.props.authenticated}/>
+    <UserControlButtons authenticated={this.props.authenticated}/>
        </div>
     }
 }
@@ -44,7 +25,11 @@ class UserControlButtons extends React.Component {
                 <LoginBar store={this.props.store}/>
             )
         } else {
-            return <div> User profile link/DD </div>
+            return <Link
+                       style={styles.link}
+                       to="/profile">
+                    Edit profile </Link>
+
         }
     }
 }
@@ -56,6 +41,32 @@ const ActiveTopBar = connect(
         }
     }
 )(TopBar)
+
+const styles = reactCSS({
+    'default': {
+        container: {
+            background: 'green',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+        },
+        h1: {
+            color: '#FFF',
+            display: 'flex',
+            alignItems: 'center',
+            fontSize: '2em',
+        },
+        leftSide: {
+            display: 'flex',
+            flexFlow: 'row'
+        },
+        link: {
+            color: '#FFF',
+            marginRight: '1em'
+            
+        }
+    }
+})
 
 
 export default ActiveTopBar

@@ -6,7 +6,7 @@ export default function timerMiddleware(store){
                                           1000)
           
     } else if (action.type === 'STOP_TIMER') {
-        clearInterval(action.interval);
+        clearInterval(store.getState().timer.interval);
     }
     else if (action.type === 'RESUME_TIMER') {
         action.interval = setInterval(() => store.dispatch({type: 'TICK',

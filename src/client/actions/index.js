@@ -1,4 +1,4 @@
-// move this to a timerAction file
+// move this to a timerAction file -- name clash wasting my time already
 export const updateLabel = (label) => {
     return {
         type: "UPDATE_LABEL",
@@ -6,8 +6,10 @@ export const updateLabel = (label) => {
     }
 }
 
-export function searchTimings(label, jwt) {
-    return (dispatch) => {
+export function searchTimings() {
+    return (dispatch, getState) => {
+        const jwt = getState().login.jwt
+        const label = getState().timer.searchLabel
         return fetch('/timings', {
             method: 'post',
             headers: {
@@ -89,10 +91,11 @@ export function registerAction(email, password){
 }
 
 
-export function saveProfileAction(user, jwt){
-    return (dispatch) => {
+export function saveProfileAction(firstName, lastName,  email){
+    return (dispatch, getState) => {
         console.log("user is")
         console.log(user)
+        const jwt = getState().login.jwt
         return fetch('/edit-profile', {
             method: 'post',
             headers: {
@@ -216,6 +219,7 @@ export function resumeTimer(){
 }
 
 export function startTimer(){
+    console.log("starting timer")
     return {
         type: "START_TIMER"
     }
@@ -224,7 +228,6 @@ export function startTimer(){
 export function stopTimer(interval){
     return {
         type: "STOP_TIMER",
-        interval
     }
 }
 
@@ -235,8 +238,9 @@ export function lapTimerAction(timestamp){
     }
 }
 
-export function getTimings(timer, jwt){
-    return (dispatch) => {
+export function getTimings(timer){
+    return (dispatch, getState) => {
+        const jwt = getState().login.jwt
         return fetch('/timings', {
             method: 'post',
             headers: {
@@ -257,8 +261,10 @@ export function getTimings(timer, jwt){
     }
 }
 
-export function recordTimer(timer, jwt){
-    return (dispatch) => {
+export function recordTimer(){
+    return (dispatch, getState) => {
+        const jwt = getState().login.jwt
+        const timer = getState().timer
         return fetch('/recordTimer', {
             method: 'post',
             headers: {
